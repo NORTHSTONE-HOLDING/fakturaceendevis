@@ -57,7 +57,10 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
       .from("customers")
       .select("id", { count: "exact", head: true })
       .is("deleted_at", null),
-    supabase.from("products").select("stock, min_stock").is("deleted_at", null),
+    supabase
+      .from("products")
+      .select("stock, min_stock, is_warehouse_item")
+      .is("deleted_at", null),
     supabase
       .from("invoices")
       .select("id, number, total, status, issue_date, customer_id")
@@ -90,7 +93,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
   }));
 
   const lowStockCount = (products ?? []).filter(
-    (p) => Number(p.stock) <= Number(p.min_stock),
+    (p) => p.is_warehouse_item && Number(p.stock) <= Number(p.min_stock),
   ).length;
 
   return {

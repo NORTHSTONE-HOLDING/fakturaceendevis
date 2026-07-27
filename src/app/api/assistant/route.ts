@@ -70,7 +70,7 @@ async function gatherContext(
       .is("deleted_at", null),
     supabase
       .from("products")
-      .select("name, stock, min_stock")
+      .select("name, stock, min_stock, is_warehouse_item")
       .is("deleted_at", null),
     supabase
       .from("customers")
@@ -83,7 +83,9 @@ async function gatherContext(
     (i) => i.status !== "paid" && i.due_date < today && i.status !== "cancelled",
   );
   const unpaid = inv.filter((i) => i.status === "sent" || i.status === "overdue");
-  const lowStock = (products ?? []).filter((p) => p.stock <= p.min_stock);
+  const lowStock = (products ?? []).filter(
+    (p) => p.is_warehouse_item && p.stock <= p.min_stock,
+  );
   const revenue = inv
     .filter((i) => i.status === "paid")
     .reduce((sum, i) => sum + Number(i.total), 0);
