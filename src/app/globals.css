@@ -116,11 +116,11 @@
   }
 }
 
-/* A4 document printing — identical margins, no overflow, perfect printing. */
+/* A4 document printing — 20mm margins, no overflow, perfect printing. */
 @media print {
   @page {
     size: A4;
-    margin: 14mm;
+    margin: 20mm;
   }
   html,
   body {
@@ -132,11 +132,11 @@
   .document-sheet {
     max-width: none !important;
     width: 100% !important;
+    min-height: 0 !important;
     box-shadow: none !important;
   }
-  .document-sheet .p-6,
-  .document-sheet.p-6,
-  .document-sheet [class*="sm:p-10"] {
+  /* @page already provides the 20mm margin — remove inner sheet padding. */
+  .document-sheet > div {
     padding: 0 !important;
   }
 }

@@ -127,6 +127,87 @@ export type Database = {
         }
         Relationships: []
       }
+      construction_diary_entries: {
+        Row: {
+          activities: string | null
+          ai_summary: string | null
+          created_at: string
+          created_by: string | null
+          entry_date: string
+          equipment_used: string | null
+          id: string
+          image_urls: string[]
+          location: string | null
+          materials_used: string | null
+          notes: string | null
+          problems: string | null
+          project_id: string
+          rain: boolean
+          temperature: number | null
+          weather: string | null
+          wind: string | null
+          workers_count: number
+          working_hours: number
+        }
+        Insert: {
+          activities?: string | null
+          ai_summary?: string | null
+          created_at?: string
+          created_by?: string | null
+          entry_date?: string
+          equipment_used?: string | null
+          id?: string
+          image_urls?: string[]
+          location?: string | null
+          materials_used?: string | null
+          notes?: string | null
+          problems?: string | null
+          project_id: string
+          rain?: boolean
+          temperature?: number | null
+          weather?: string | null
+          wind?: string | null
+          workers_count?: number
+          working_hours?: number
+        }
+        Update: {
+          activities?: string | null
+          ai_summary?: string | null
+          created_at?: string
+          created_by?: string | null
+          entry_date?: string
+          equipment_used?: string | null
+          id?: string
+          image_urls?: string[]
+          location?: string | null
+          materials_used?: string | null
+          notes?: string | null
+          problems?: string | null
+          project_id?: string
+          rain?: boolean
+          temperature?: number | null
+          weather?: string | null
+          wind?: string | null
+          workers_count?: number
+          working_hours?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "construction_diary_entries_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "construction_diary_entries_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
@@ -198,6 +279,76 @@ export type Database = {
           },
         ]
       }
+      defects: {
+        Row: {
+          completed: boolean
+          completion_date: string | null
+          created_at: string
+          created_by: string | null
+          customer_confirmed: boolean
+          deadline: string | null
+          description: string
+          handover_id: string | null
+          id: string
+          photo_url: string | null
+          priority: Database["public"]["Enums"]["defect_priority"]
+          project_id: string
+          responsible: string | null
+        }
+        Insert: {
+          completed?: boolean
+          completion_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_confirmed?: boolean
+          deadline?: string | null
+          description: string
+          handover_id?: string | null
+          id?: string
+          photo_url?: string | null
+          priority?: Database["public"]["Enums"]["defect_priority"]
+          project_id: string
+          responsible?: string | null
+        }
+        Update: {
+          completed?: boolean
+          completion_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_confirmed?: boolean
+          deadline?: string | null
+          description?: string
+          handover_id?: string | null
+          id?: string
+          photo_url?: string | null
+          priority?: Database["public"]["Enums"]["defect_priority"]
+          project_id?: string
+          responsible?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "defects_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "defects_handover_id_fkey"
+            columns: ["handover_id"]
+            isOneToOne: false
+            referencedRelation: "handover_protocols"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "defects_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_sequences: {
         Row: {
           current_number: number
@@ -218,6 +369,85 @@ export type Database = {
           year?: number
         }
         Relationships: []
+      }
+      handover_protocols: {
+        Row: {
+          address: string | null
+          completed_work: string | null
+          contractor_signature: string | null
+          created_at: string
+          created_by: string | null
+          customer_id: string | null
+          customer_signature: string | null
+          equipment_delivered: string | null
+          id: string
+          keys_handed: string | null
+          meters: string | null
+          notes: string | null
+          number: string
+          project_id: string
+          protocol_date: string
+          responsible_person: string | null
+        }
+        Insert: {
+          address?: string | null
+          completed_work?: string | null
+          contractor_signature?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          customer_signature?: string | null
+          equipment_delivered?: string | null
+          id?: string
+          keys_handed?: string | null
+          meters?: string | null
+          notes?: string | null
+          number: string
+          project_id: string
+          protocol_date?: string
+          responsible_person?: string | null
+        }
+        Update: {
+          address?: string | null
+          completed_work?: string | null
+          contractor_signature?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          customer_signature?: string | null
+          equipment_delivered?: string | null
+          id?: string
+          keys_handed?: string | null
+          meters?: string | null
+          notes?: string | null
+          number?: string
+          project_id?: string
+          protocol_date?: string
+          responsible_person?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "handover_protocols_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "handover_protocols_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "handover_protocols_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       invoice_items: {
         Row: {
@@ -278,6 +508,7 @@ export type Database = {
       }
       invoices: {
         Row: {
+          advance_category: string | null
           created_at: string
           created_by: string | null
           currency: string
@@ -286,9 +517,11 @@ export type Database = {
           due_date: string
           iban: string | null
           id: string
+          is_advance: boolean
           issue_date: string
           notes: string | null
           number: string
+          project_id: string | null
           status: Database["public"]["Enums"]["invoice_status"]
           subtotal: number
           swift: string | null
@@ -299,6 +532,7 @@ export type Database = {
           vat_total: number
         }
         Insert: {
+          advance_category?: string | null
           created_at?: string
           created_by?: string | null
           currency?: string
@@ -307,9 +541,11 @@ export type Database = {
           due_date?: string
           iban?: string | null
           id?: string
+          is_advance?: boolean
           issue_date?: string
           notes?: string | null
           number: string
+          project_id?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
           subtotal?: number
           swift?: string | null
@@ -320,6 +556,7 @@ export type Database = {
           vat_total?: number
         }
         Update: {
+          advance_category?: string | null
           created_at?: string
           created_by?: string | null
           currency?: string
@@ -328,9 +565,11 @@ export type Database = {
           due_date?: string
           iban?: string | null
           id?: string
+          is_advance?: boolean
           issue_date?: string
           notes?: string | null
           number?: string
+          project_id?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
           subtotal?: number
           swift?: string | null
@@ -353,6 +592,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
@@ -561,6 +807,143 @@ export type Database = {
         }
         Relationships: []
       }
+      project_costs: {
+        Row: {
+          amount: number
+          category: string
+          cost_date: string
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          project_id: string
+        }
+        Insert: {
+          amount?: number
+          category?: string
+          cost_date?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          project_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          cost_date?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_costs_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_costs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          address: string | null
+          budget_amount: number
+          created_at: string
+          created_by: string | null
+          currency: string
+          customer_id: string | null
+          deleted_at: string | null
+          end_date: string | null
+          id: string
+          manager_id: string | null
+          name: string
+          notes: string | null
+          number: string
+          quotation_id: string | null
+          start_date: string
+          status: Database["public"]["Enums"]["project_status"]
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          budget_amount?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          customer_id?: string | null
+          deleted_at?: string | null
+          end_date?: string | null
+          id?: string
+          manager_id?: string | null
+          name: string
+          notes?: string | null
+          number: string
+          quotation_id?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["project_status"]
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          budget_amount?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          customer_id?: string | null
+          deleted_at?: string | null
+          end_date?: string | null
+          id?: string
+          manager_id?: string | null
+          name?: string
+          notes?: string | null
+          number?: string
+          quotation_id?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["project_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_quotation_id_fkey"
+            columns: ["quotation_id"]
+            isOneToOne: false
+            referencedRelation: "quotations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quotations: {
         Row: {
           created_at: string
@@ -724,9 +1107,16 @@ export type Database = {
         | "accountant"
         | "warehouse"
         | "sales"
-      document_type: "INV" | "ADV" | "QTN" | "ORD" | "DLV"
+      defect_priority: "low" | "medium" | "high" | "critical"
+      document_type: "INV" | "ADV" | "QTN" | "ORD" | "DLV" | "PRJ" | "HOV"
       invoice_status: "draft" | "sent" | "paid" | "overdue" | "cancelled"
       product_status: "active" | "inactive" | "archived"
+      project_status:
+        | "planned"
+        | "active"
+        | "on_hold"
+        | "completed"
+        | "archived"
       quotation_status:
         | "draft"
         | "sent"
@@ -871,9 +1261,11 @@ export const Constants = {
         "warehouse",
         "sales",
       ],
-      document_type: ["INV", "ADV", "QTN", "ORD", "DLV"],
+      defect_priority: ["low", "medium", "high", "critical"],
+      document_type: ["INV", "ADV", "QTN", "ORD", "DLV", "PRJ", "HOV"],
       invoice_status: ["draft", "sent", "paid", "overdue", "cancelled"],
       product_status: ["active", "inactive", "archived"],
+      project_status: ["planned", "active", "on_hold", "completed", "archived"],
       quotation_status: [
         "draft",
         "sent",

@@ -15,6 +15,7 @@ import {
   Bot,
   Settings,
   Wallet,
+  HardHat,
 } from "lucide-react";
 
 import type { AppRole } from "@/types/database";
@@ -29,6 +30,7 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   { label: "Přehled", href: "/dashboard", icon: LayoutDashboard, group: "core" },
+  { label: "Projekty", href: "/projects", icon: HardHat, group: "core" },
   { label: "Zákazníci", href: "/customers", icon: Users, group: "core" },
   { label: "Produkty", href: "/products", icon: Package, group: "inventory" },
   { label: "Ceník", href: "/price-lists", icon: Tags, group: "inventory" },

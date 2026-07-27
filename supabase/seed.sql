@@ -36,3 +36,12 @@ values
   ('TechShop a.s.', 'Petra Svobodová', '48759632', 'CZ48759632', 'Průmyslová 8', 'Ostrava', '702 00', '+420 777 333 444', 'petra@techshop.cz', 'https://techshop.cz', array['B2B']),
   ('Zahrada Zelená s.r.o.', 'Karel Dvořák', '63258741', null, 'Květinová 45', 'Plzeň', '301 00', '+420 777 555 666', 'info@zahradazelena.cz', null, array['B2C'])
 on conflict do nothing;
+
+-- Sample accepted quotation (ready to be converted into a Construction Project)
+insert into public.quotations (number, customer_id, status, valid_until, subtotal, vat_total, total, notes)
+select 'QTN-2026-000001', c.id, 'accepted', current_date + 30, 250000, 52500, 302500,
+       'Rekonstrukce bytového jádra'
+from public.customers c
+where c.company = 'Novák & partneři s.r.o.'
+limit 1
+on conflict (number) do nothing;

@@ -1,6 +1,7 @@
 import { FileText } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
+import { StartProjectButton } from "./start-project-button";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -52,6 +53,7 @@ export default async function QuotationsPage() {
                   <TableHead>Platnost do</TableHead>
                   <TableHead className="text-right">Celkem</TableHead>
                   <TableHead>Stav</TableHead>
+                  <TableHead className="text-right">Akce</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -69,6 +71,11 @@ export default async function QuotationsPage() {
                     </TableCell>
                     <TableCell>
                       <StatusBadge status={q.status} />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {q.status !== "converted" && (
+                        <StartProjectButton quotationId={q.id} />
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
