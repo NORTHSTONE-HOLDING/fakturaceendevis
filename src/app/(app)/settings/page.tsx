@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata = { title: "Settings" };
+export const metadata = { title: "Nastavení" };
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -34,48 +34,48 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Settings"
-        description="Company profile, payment details, document numbering and integrations."
+        title="Nastavení"
+        description="Profil firmy, platební údaje, číslování dokladů a integrace."
       />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Building2 className="h-4 w-4 text-primary" /> Company
+              <Building2 className="h-4 w-4 text-primary" /> Firma
             </CardTitle>
-            <CardDescription>Used across all documents</CardDescription>
+            <CardDescription>Používá se na všech dokladech</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <Field label="Name" value={company?.name} />
+            <Field label="Název" value={company?.name} />
             <Field label="IČO" value={company?.ico} />
             <Field label="DIČ" value={company?.dic} />
-            <Field label="Address" value={company?.address} />
-            <Field label="Email" value={company?.email} />
-            <Field label="Phone" value={company?.phone} />
+            <Field label="Adresa" value={company?.address} />
+            <Field label="E-mail" value={company?.email} />
+            <Field label="Telefon" value={company?.phone} />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4 text-primary" /> Payment &amp; numbering
+              <CreditCard className="h-4 w-4 text-primary" /> Platba a číslování
             </CardTitle>
             <CardDescription>
-              Bank details and document sequences
+              Bankovní údaje a číselné řady dokladů
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <Field label="IBAN" value={company?.iban} />
             <Field label="SWIFT" value={company?.swift} />
             <Field
-              label="Default VAT"
+              label="Výchozí DPH"
               value={company ? `${Number(company.default_vat_rate)}%` : undefined}
             />
-            <Field label="Currency" value={company?.currency} />
+            <Field label="Měna" value={company?.currency} />
             <div className="pt-2">
               <p className="mb-1 text-xs text-muted-foreground">
-                Document numbering formats
+                Formáty číslování dokladů
               </p>
               <div className="flex flex-wrap gap-1.5 font-mono text-xs">
                 <Badge variant="outline">INV-YYYY-000001</Badge>
@@ -90,9 +90,9 @@ export default async function SettingsPage() {
 
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Integrations</CardTitle>
+            <CardTitle>Integrace</CardTitle>
             <CardDescription>
-              Configure API keys via environment variables
+              Nastavte API klíče pomocí proměnných prostředí
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 sm:grid-cols-3">
@@ -106,7 +106,7 @@ export default async function SettingsPage() {
                   <span className="text-sm font-medium">{i.name}</span>
                 </div>
                 <Badge variant={i.on ? "success" : "outline"}>
-                  {i.on ? "Connected" : "Not set"}
+                  {i.on ? "Připojeno" : "Nenastaveno"}
                 </Badge>
               </div>
             ))}

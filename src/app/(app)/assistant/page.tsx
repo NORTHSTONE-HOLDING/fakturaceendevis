@@ -9,38 +9,38 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export const metadata = { title: "AI Assistant" };
+export const metadata = { title: "AI Asistent" };
 
 const COMMANDS = [
-  "Create invoice",
-  "Create quotation",
-  "Find overdue invoices",
-  "Find customer",
-  "Warehouse status",
-  "Calculate VAT",
-  "Find unpaid invoices",
-  "Create reminder",
-  "Analyze sales",
-  "Predict stock shortages",
-  "Generate reports",
+  "Vytvořit fakturu",
+  "Vytvořit cenovou nabídku",
+  "Najít faktury po splatnosti",
+  "Najít zákazníka",
+  "Stav skladu",
+  "Vypočítat DPH",
+  "Najít neuhrazené faktury",
+  "Vytvořit upomínku",
+  "Analyzovat prodeje",
+  "Předpovědět nedostatek zásob",
+  "Vygenerovat přehledy",
 ];
 
 export default function AssistantPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="AI Assistant"
-        description="Your ERP copilot — grounded in live business data."
+        title="AI Asistent"
+        description="Váš ERP kopilot — pracuje s živými firemními daty."
       />
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" /> What can I ask?
+              <Sparkles className="h-4 w-4 text-primary" /> Na co se můžu zeptat?
             </CardTitle>
             <CardDescription>
-              Use the floating assistant (bottom-right) anywhere in the app.
+              Plovoucí asistent je dostupný vpravo dole na každé stránce.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -60,15 +60,15 @@ export default function AssistantPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-primary" /> Daily automation
+              <Zap className="h-4 w-4 text-primary" /> Denní automatizace
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>• Unpaid &amp; overdue invoice checks</p>
-            <p>• Warehouse shortage alerts</p>
-            <p>• Expiring quotations</p>
-            <p>• Missing customer data / VAT</p>
-            <p>• Duplicate product detection</p>
+            <p>• Kontrola neuhrazených faktur a faktur po splatnosti</p>
+            <p>• Upozornění na nedostatek skladových zásob</p>
+            <p>• Blížící se konec platnosti nabídek</p>
+            <p>• Chybějící údaje zákazníka / DPH</p>
+            <p>• Detekce duplicitních produktů</p>
           </CardContent>
         </Card>
       </div>
@@ -79,9 +79,9 @@ export default function AssistantPage() {
             <Bot className="h-5 w-5" />
           </div>
           <p className="text-sm text-muted-foreground">
-            Tip: the assistant answers from your live data even without an OpenAI
-            key. Add <code className="font-mono">OPENAI_API_KEY</code> to enable
-            the OpenAI Responses API.
+            Tip: asistent odpovídá z vašich živých dat i bez OpenAI klíče. Pro
+            zapnutí OpenAI Responses API přidejte{" "}
+            <code className="font-mono">OPENAI_API_KEY</code>.
           </p>
         </CardContent>
       </Card>

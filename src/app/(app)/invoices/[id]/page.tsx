@@ -3,12 +3,12 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 import { InvoiceActions } from "./invoice-actions";
-import { InvoiceDocument } from "@/components/documents/invoice-document";
+import { DocumentTemplate } from "@/components/documents/document-template";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getInvoiceById } from "@/services/invoices";
-import { buildSpdString, qrDataUri } from "@/lib/payment";
+import { invoiceToDocument } from "@/lib/document-mappers";
 
 export default async function InvoiceDetailPage({
   params,
@@ -19,16 +19,8 @@ export default async function InvoiceDetailPage({
   const detail = await getInvoiceById(id);
   if (!detail) notFound();
 
-  const { invoice, customer, items, company } = detail;
-
-  const spd = buildSpdString({
-    iban: invoice.iban,
-    amount: Number(invoice.total),
-    currency: invoice.currency,
-    variableSymbol: invoice.variable_symbol,
-    message: invoice.number,
-  });
-  const qr = spd ? await qrDataUri(spd) : null;
+  const { invoice, customer } = detail;
+  const document = await invoiceToDocument(detail);
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -47,22 +39,16 @@ export default async function InvoiceDetailPage({
               <StatusBadge status={invoice.status} />
             </div>
             <p className="text-sm text-muted-foreground">
-              {customer?.company ?? "No customer"}
+              {customer?.company ?? "Bez zákazníka"}
             </p>
           </div>
         </div>
         <InvoiceActions id={invoice.id} status={invoice.status} />
       </div>
 
-      <Card>
+      <Card className="overflow-hidden">
         <CardContent className="p-0">
-          <InvoiceDocument
-            invoice={invoice}
-            customer={customer}
-            items={items}
-            company={company}
-            qr={qr}
-          />
+          <DocumentTemplate data={document} />
         </CardContent>
       </Card>
     </div>

@@ -14,9 +14,9 @@ interface Message {
 }
 
 const SUGGESTIONS = [
-  "Find overdue invoices",
-  "Warehouse status",
-  "Analyze sales",
+  "Faktury po splatnosti",
+  "Stav skladu",
+  "Analyzovat prodeje",
 ];
 
 export function AssistantWidget() {
@@ -27,7 +27,7 @@ export function AssistantWidget() {
     {
       role: "assistant",
       content:
-        "Hi, I'm your ENDEVIS AI assistant. Ask me about invoices, customers, warehouse status or sales analytics.",
+        "Dobrý den, jsem váš ENDEVIS AI asistent. Zeptejte se mě na faktury, zákazníky, stav skladu nebo analýzu prodejů.",
     },
   ]);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -53,13 +53,13 @@ export function AssistantWidget() {
         ...m,
         {
           role: "assistant",
-          content: data.reply ?? data.error ?? "Something went wrong.",
+          content: data.reply ?? data.error ?? "Něco se pokazilo.",
         },
       ]);
     } catch {
       setMessages((m) => [
         ...m,
-        { role: "assistant", content: "I couldn't reach the server." },
+        { role: "assistant", content: "Nepodařilo se spojit se serverem." },
       ]);
     } finally {
       setLoading(false);
@@ -73,7 +73,7 @@ export function AssistantWidget() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30"
-        aria-label="Open AI assistant"
+        aria-label="Otevřít AI asistenta"
       >
         {open ? <X className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
       </motion.button>
@@ -92,9 +92,9 @@ export function AssistantWidget() {
                 <Sparkles className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-sm font-semibold">AI Assistant</p>
+                <p className="text-sm font-semibold">AI Asistent</p>
                 <p className="text-[11px] text-muted-foreground">
-                  Connected to your ERP data
+                  Připojeno k vašim ERP datům
                 </p>
               </div>
             </div>
@@ -125,7 +125,7 @@ export function AssistantWidget() {
               ))}
               {loading && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" /> Thinking…
+                  <Loader2 className="h-4 w-4 animate-spin" /> Přemýšlím…
                 </div>
               )}
             </div>
@@ -152,7 +152,7 @@ export function AssistantWidget() {
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask anything…"
+                  placeholder="Zeptejte se na cokoliv…"
                   className="h-9"
                 />
                 <Button

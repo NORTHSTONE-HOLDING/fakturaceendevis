@@ -36,7 +36,7 @@ export async function createInvoiceAction(
     (i) => i.description.trim() && i.quantity > 0,
   );
   if (items.length === 0) {
-    return { error: "Add at least one line item." };
+    return { error: "Přidejte alespoň jednu položku." };
   }
 
   const supabase = await createClient();
@@ -50,7 +50,7 @@ export async function createInvoiceAction(
     { p_doc_type: "INV" },
   );
   if (numErr || !number) {
-    return { error: numErr?.message ?? "Failed to generate invoice number." };
+    return { error: numErr?.message ?? "Nepodařilo se vygenerovat číslo faktury." };
   }
 
   // Company defaults for payment details
@@ -92,7 +92,7 @@ export async function createInvoiceAction(
     .single();
 
   if (invErr || !invoice) {
-    return { error: invErr?.message ?? "Failed to create invoice." };
+    return { error: invErr?.message ?? "Nepodařilo se vytvořit fakturu." };
   }
 
   const { error: itemsErr } = await supabase.from("invoice_items").insert(

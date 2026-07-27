@@ -32,12 +32,11 @@ export function ComingSoon({
           <div className="space-y-1">
             <div className="flex items-center justify-center gap-2">
               <h2 className="text-lg font-semibold">{title}</h2>
-              <Badge variant="warning">In progress</Badge>
+              <Badge variant="warning">Připravujeme</Badge>
             </div>
             <p className="max-w-md text-sm text-muted-foreground">
-              The data model, API layer and routing for this module are already
-              in place. The full interface is being built on top of the shared
-              architecture.
+              Datový model, API vrstva i routování tohoto modulu jsou již
+              připraveny. Kompletní rozhraní stavíme nad sdílenou architekturou.
             </p>
           </div>
           {features.length > 0 && (

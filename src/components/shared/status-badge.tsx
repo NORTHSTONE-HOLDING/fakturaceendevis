@@ -7,15 +7,15 @@ const MAP: Record<
   Status,
   { label: string; variant: "default" | "secondary" | "success" | "warning" | "destructive" | "outline" }
 > = {
-  draft: { label: "Draft", variant: "secondary" },
-  sent: { label: "Sent", variant: "default" },
-  paid: { label: "Paid", variant: "success" },
-  overdue: { label: "Overdue", variant: "destructive" },
-  cancelled: { label: "Cancelled", variant: "outline" },
-  accepted: { label: "Accepted", variant: "success" },
-  rejected: { label: "Rejected", variant: "destructive" },
-  expired: { label: "Expired", variant: "warning" },
-  converted: { label: "Converted", variant: "default" },
+  draft: { label: "Koncept", variant: "secondary" },
+  sent: { label: "Odesláno", variant: "default" },
+  paid: { label: "Zaplaceno", variant: "success" },
+  overdue: { label: "Po splatnosti", variant: "destructive" },
+  cancelled: { label: "Stornováno", variant: "outline" },
+  accepted: { label: "Přijato", variant: "success" },
+  rejected: { label: "Odmítnuto", variant: "destructive" },
+  expired: { label: "Vypršelo", variant: "warning" },
+  converted: { label: "Převedeno", variant: "default" },
 };
 
 export function StatusBadge({ status }: { status: Status }) {

@@ -15,7 +15,7 @@ export async function createProductAction(
 ): Promise<ProductFormState> {
   const code = String(formData.get("code") ?? "").trim();
   const name = String(formData.get("name") ?? "").trim();
-  if (!code || !name) return { error: "Code and name are required." };
+  if (!code || !name) return { error: "Kód a název jsou povinné." };
 
   const supabase = await createClient();
   const {
@@ -39,7 +39,7 @@ export async function createProductAction(
   });
 
   if (error) {
-    if (error.code === "23505") return { error: "Product code already exists." };
+    if (error.code === "23505") return { error: "Kód produktu již existuje." };
     return { error: error.message };
   }
 

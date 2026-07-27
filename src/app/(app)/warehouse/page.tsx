@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata = { title: "Warehouse" };
+export const metadata = { title: "Sklad" };
 
 export default async function WarehousePage() {
   const supabase = await createClient();
@@ -36,8 +36,8 @@ export default async function WarehousePage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Warehouse"
-        description="Stock levels, minimums and inventory value."
+        title="Sklad"
+        description="Skladové zásoby, minimální stavy a hodnota skladu."
       >
         <Button variant="outline" disabled>
           <Upload className="h-4 w-4" /> Import (Excel / OCR)
@@ -45,15 +45,15 @@ export default async function WarehousePage() {
       </PageHeader>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Tracked items" value={String(list.length)} icon={Warehouse} />
+        <StatCard label="Evidované položky" value={String(list.length)} icon={Warehouse} />
         <StatCard
-          label="Low stock"
+          label="Nízká zásoba"
           value={String(low.length)}
           icon={AlertTriangle}
           tone={low.length > 0 ? "warning" : "success"}
         />
         <StatCard
-          label="Inventory value"
+          label="Hodnota skladu"
           value={new Intl.NumberFormat("cs-CZ", {
             style: "currency",
             currency: "CZK",
@@ -70,10 +70,10 @@ export default async function WarehousePage() {
             <TableHeader>
               <TableRow>
                 <TableHead>SKU / EAN</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead className="text-right">Stock</TableHead>
-                <TableHead className="text-right">Min</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Název</TableHead>
+                <TableHead className="text-right">Skladem</TableHead>
+                <TableHead className="text-right">Min.</TableHead>
+                <TableHead>Stav</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -94,7 +94,7 @@ export default async function WarehousePage() {
                     </TableCell>
                     <TableCell>
                       <Badge variant={isLow ? "destructive" : "success"}>
-                        {isLow ? "Reorder" : "OK"}
+                        {isLow ? "Doobjednat" : "OK"}
                       </Badge>
                     </TableCell>
                   </TableRow>

@@ -24,13 +24,13 @@ export function Topbar({ profile }: { profile: Profile }) {
       <div className="relative hidden max-w-md flex-1 md:block">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search customers, invoices, products…"
+          placeholder="Hledat zákazníky, faktury, produkty…"
           className="pl-9"
         />
       </div>
 
       <div className="ml-auto flex items-center gap-2">
-        <Button variant="ghost" size="icon" aria-label="Notifications">
+        <Button variant="ghost" size="icon" aria-label="Oznámení">
           <Bell className="h-5 w-5" />
         </Button>
 
@@ -53,7 +53,7 @@ export function Topbar({ profile }: { profile: Profile }) {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>
               <div className="flex flex-col">
-                <span>{profile.full_name ?? "Account"}</span>
+                <span>{profile.full_name ?? "Účet"}</span>
                 <span className="text-xs font-normal text-muted-foreground">
                   {profile.email}
                 </span>
@@ -64,7 +64,7 @@ export function Topbar({ profile }: { profile: Profile }) {
               <button type="submit" className="w-full">
                 <DropdownMenuItem className="text-destructive focus:text-destructive">
                   <LogOut className="h-4 w-4" />
-                  Sign out
+                  Odhlásit
                 </DropdownMenuItem>
               </button>
             </form>

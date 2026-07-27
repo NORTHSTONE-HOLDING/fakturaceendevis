@@ -140,7 +140,7 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
         toast.error(result.error);
         return;
       }
-      toast.success(`Invoice ${result.number} created`);
+      toast.success(`Faktura ${result.number} vytvořena`);
       router.push(`/invoices/${result.id}`);
     });
   }
@@ -149,14 +149,14 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
+          <CardTitle>Údaje</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2 sm:col-span-2">
-            <Label>Customer</Label>
+            <Label>Zákazník</Label>
             <Select value={customerId} onValueChange={setCustomerId}>
               <SelectTrigger>
-                <SelectValue placeholder="Select customer…" />
+                <SelectValue placeholder="Vyberte zákazníka…" />
               </SelectTrigger>
               <SelectContent>
                 {customers.map((c) => (
@@ -168,7 +168,7 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="issue">Issue date</Label>
+            <Label htmlFor="issue">Datum vystavení</Label>
             <Input
               id="issue"
               type="date"
@@ -177,7 +177,7 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="tax">Tax date</Label>
+            <Label htmlFor="tax">Datum zdaň. plnění</Label>
             <Input
               id="tax"
               type="date"
@@ -186,7 +186,7 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="due">Due date</Label>
+            <Label htmlFor="due">Datum splatnosti</Label>
             <Input
               id="due"
               type="date"
@@ -199,13 +199,13 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
 
       <Card>
         <CardHeader className="flex-row items-center justify-between space-y-0">
-          <CardTitle>Line items</CardTitle>
+          <CardTitle>Položky</CardTitle>
           <Button
             variant="outline"
             size="sm"
             onClick={() => setItems((p) => [...p, newLine()])}
           >
-            <Plus className="h-4 w-4" /> Add item
+            <Plus className="h-4 w-4" /> Přidat položku
           </Button>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -216,13 +216,13 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
             >
               <div className="relative col-span-12 md:col-span-5">
                 <Label className="mb-1 block text-xs text-muted-foreground">
-                  Product / description
+                  Produkt / popis
                 </Label>
                 <div className="relative">
                   <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     value={item.search}
-                    placeholder="Type to search products…"
+                    placeholder="Začněte psát pro vyhledání produktu…"
                     className="pl-8"
                     onChange={(e) => searchProducts(item.key, e.target.value)}
                     onFocus={() =>
@@ -263,7 +263,7 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
 
               <div className="col-span-4 md:col-span-2">
                 <Label className="mb-1 block text-xs text-muted-foreground">
-                  Qty
+                  Množství
                 </Label>
                 <Input
                   type="number"
@@ -278,7 +278,7 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
               </div>
               <div className="col-span-4 md:col-span-2">
                 <Label className="mb-1 block text-xs text-muted-foreground">
-                  Unit price
+                  Cena/j.
                 </Label>
                 <Input
                   type="number"
@@ -330,7 +330,7 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
                 </Button>
               </div>
               <div className="col-span-12 text-right text-sm text-muted-foreground">
-                Line total:{" "}
+                Celkem za položku:{" "}
                 <span className="font-medium text-foreground">
                   {formatCurrency(item.quantity * item.unit_price)}
                 </span>
@@ -340,15 +340,15 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
 
           <div className="flex flex-col items-end gap-1 pt-2 text-sm">
             <div className="flex w-64 justify-between">
-              <span className="text-muted-foreground">Subtotal</span>
+              <span className="text-muted-foreground">Mezisoučet</span>
               <span>{formatCurrency(subtotal)}</span>
             </div>
             <div className="flex w-64 justify-between">
-              <span className="text-muted-foreground">VAT</span>
+              <span className="text-muted-foreground">DPH</span>
               <span>{formatCurrency(vatTotal)}</span>
             </div>
             <div className="flex w-64 justify-between border-t pt-1 text-base font-semibold">
-              <span>Total</span>
+              <span>Celkem</span>
               <span>{formatCurrency(total)}</span>
             </div>
           </div>
@@ -357,24 +357,24 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
 
       <Card>
         <CardContent className="space-y-2 pt-6">
-          <Label htmlFor="notes">Notes</Label>
+          <Label htmlFor="notes">Poznámky</Label>
           <Textarea
             id="notes"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
-            placeholder="Payment terms, thank-you note…"
+            placeholder="Platební podmínky, poděkování…"
           />
         </CardContent>
       </Card>
 
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={() => router.push("/invoices")}>
-          Cancel
+          Zrušit
         </Button>
         <Button onClick={submit} disabled={pending}>
           {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-          Create invoice
+          Vytvořit fakturu
         </Button>
       </div>
     </div>

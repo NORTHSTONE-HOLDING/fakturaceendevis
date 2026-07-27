@@ -14,7 +14,7 @@ function SubmitButton() {
   return (
     <Button type="submit" className="w-full" disabled={pending}>
       {pending && <Loader2 className="animate-spin" />}
-      Send reset link
+      Odeslat odkaz pro obnovení
     </Button>
   );
 }
@@ -29,16 +29,16 @@ export default function ForgotPasswordPage() {
     <div className="space-y-6">
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-tight">
-          Reset your password
+          Obnovení hesla
         </h2>
         <p className="text-sm text-muted-foreground">
-          Enter your email and we&apos;ll send you a secure reset link.
+          Zadejte svůj e-mail a zašleme vám bezpečný odkaz pro obnovení.
         </p>
       </div>
 
       <form action={formAction} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">E-mail</Label>
           <Input
             id="email"
             name="email"
@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
 
       <p className="text-center text-sm text-muted-foreground">
         <Link href="/login" className="font-medium text-primary hover:underline">
-          Back to sign in
+          Zpět na přihlášení
         </Link>
       </p>
     </div>

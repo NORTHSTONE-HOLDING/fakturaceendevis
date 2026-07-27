@@ -108,33 +108,33 @@ async function gatherContext(
 function deterministicReply(message: string, ctx: AssistantContext): string {
   const q = message.toLowerCase();
 
-  if (q.includes("overdue") || q.includes("po splat")) {
+  if (q.includes("splat") || q.includes("overdue")) {
     return ctx.overdueCount === 0
-      ? "You have no overdue invoices. "
-      : `You have ${ctx.overdueCount} overdue invoice(s) totalling ${formatCurrency(ctx.overdueTotal)}. I can draft reminders (3/7/14/30 days) via email or WhatsApp.`;
+      ? "Nemáte žádné faktury po splatnosti."
+      : `Máte ${ctx.overdueCount} faktur po splatnosti v celkové výši ${formatCurrency(ctx.overdueTotal)}. Mohu připravit upomínky (3/7/14/30 dní) e-mailem nebo přes WhatsApp.`;
   }
-  if (q.includes("unpaid") || q.includes("neuhraz")) {
-    return `There are ${ctx.unpaidCount} unpaid invoice(s) currently awaiting payment.`;
+  if (q.includes("neuhraz") || q.includes("unpaid")) {
+    return `Aktuálně je ${ctx.unpaidCount} neuhrazených faktur čekajících na platbu.`;
   }
-  if (q.includes("warehouse") || q.includes("stock") || q.includes("sklad")) {
+  if (q.includes("sklad") || q.includes("warehouse") || q.includes("stock") || q.includes("zásob")) {
     if (ctx.lowStock.length === 0)
-      return "All warehouse items are above their minimum stock levels.";
+      return "Všechny skladové položky jsou nad minimální hladinou zásob.";
     const lines = ctx.lowStock
       .map((p) => `• ${p.name}: ${p.stock} (min ${p.min_stock})`)
       .join("\n");
-    return `${ctx.lowStock.length} item(s) are at or below minimum stock:\n${lines}`;
+    return `${ctx.lowStock.length} položek je na nebo pod minimální zásobou:\n${lines}`;
   }
-  if (q.includes("sales") || q.includes("revenue") || q.includes("analyze")) {
-    return `Paid revenue so far is ${formatCurrency(ctx.revenue)} across your invoices. You manage ${ctx.customerCount} customers and ${ctx.productCount} products.`;
+  if (q.includes("prodej") || q.includes("tržb") || q.includes("sales") || q.includes("analyz")) {
+    return `Zaplacené tržby zatím činí ${formatCurrency(ctx.revenue)} napříč fakturami. Spravujete ${ctx.customerCount} zákazníků a ${ctx.productCount} produktů.`;
   }
-  if (q.includes("customer") || q.includes("zákazn")) {
-    return `You currently have ${ctx.customerCount} active customers. Open the Customers module to search or add a new one.`;
+  if (q.includes("zákazn") || q.includes("customer")) {
+    return `Aktuálně máte ${ctx.customerCount} aktivních zákazníků. Otevřete modul Zákazníci pro vyhledání nebo přidání nového.`;
   }
-  if (q.includes("invoice") || q.includes("faktur")) {
-    return "I can help create invoices with automatic numbering (INV-YYYY-000001). Head to Invoices → New, or tell me the customer and items.";
+  if (q.includes("faktur") || q.includes("invoice")) {
+    return "Rád pomohu s vytvořením faktury s automatickým číslováním (INV-RRRR-000001). Přejděte na Faktury → Nová, nebo mi sdělte zákazníka a položky.";
   }
 
-  return `Here is a quick overview: ${ctx.customerCount} customers, ${ctx.productCount} products, ${ctx.unpaidCount} unpaid invoice(s), ${ctx.overdueCount} overdue, and ${ctx.lowStock.length} low-stock item(s). Ask me about overdue invoices, warehouse status or sales.`;
+  return `Rychlý přehled: ${ctx.customerCount} zákazníků, ${ctx.productCount} produktů, ${ctx.unpaidCount} neuhrazených faktur, ${ctx.overdueCount} po splatnosti a ${ctx.lowStock.length} položek s nízkou zásobou. Zeptejte se mě na faktury po splatnosti, stav skladu nebo prodeje.`;
 }
 
 async function askOpenAI(
@@ -155,11 +155,11 @@ async function askOpenAI(
         {
           role: "system",
           content:
-            "You are the ENDEVIS InvoiceFlow AI assistant for an ERP system. Be concise and professional. Use the provided live data context to answer.",
+            "Jsi AI asistent ERP systému ENDEVIS InvoiceFlow. Odpovídej stručně a profesionálně v češtině. K odpovědím využívej poskytnutá živá data.",
         },
         {
           role: "user",
-          content: `Live data context: ${JSON.stringify(ctx)}\n\nQuestion: ${message}`,
+          content: `Kontext živých dat: ${JSON.stringify(ctx)}\n\nDotaz: ${message}`,
         },
       ],
     }),
@@ -172,6 +172,6 @@ async function askOpenAI(
   return (
     data.output_text ??
     data.output?.[0]?.content?.[0]?.text ??
-    "I couldn't generate a response."
+    "Nepodařilo se vygenerovat odpověď."
   );
 }

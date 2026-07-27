@@ -2,15 +2,15 @@ import { Tags } from "lucide-react";
 
 import { ComingSoon } from "@/components/shared/coming-soon";
 
-export const metadata = { title: "Price Lists" };
+export const metadata = { title: "Ceník" };
 
 export default function PriceListsPage() {
   return (
     <ComingSoon
-      title="Price Lists"
-      description="Customer-specific and tiered pricing on top of the product catalog."
+      title="Ceník"
+      description="Cenové hladiny a ceny specifické pro zákazníky nad katalogem produktů."
       icon={Tags}
-      features={["Tiered pricing", "Per-customer lists", "Bulk discounts"]}
+      features={["Cenové hladiny", "Ceníky pro zákazníky", "Množstevní slevy"]}
     />
   );
 }

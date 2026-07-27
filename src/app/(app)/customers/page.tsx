@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata = { title: "Customers" };
+export const metadata = { title: "Zákazníci" };
 
 export default async function CustomersPage() {
   const supabase = await createClient();
@@ -29,8 +29,8 @@ export default async function CustomersPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Customers"
-        description={`${list.length} companies in your database`}
+        title="Zákazníci"
+        description={`${list.length} firem ve vaší databázi`}
       >
         <CustomerFormDialog />
       </PageHeader>
@@ -41,17 +41,17 @@ export default async function CustomersPage() {
             <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
               <Building2 className="h-8 w-8 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
-                No customers yet. Add your first company.
+                Zatím žádní zákazníci. Přidejte svou první firmu.
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Company</TableHead>
-                  <TableHead>Contact</TableHead>
+                  <TableHead>Firma</TableHead>
+                  <TableHead>Kontakt</TableHead>
                   <TableHead>IČO / DIČ</TableHead>
-                  <TableHead>Tags</TableHead>
+                  <TableHead>Štítky</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

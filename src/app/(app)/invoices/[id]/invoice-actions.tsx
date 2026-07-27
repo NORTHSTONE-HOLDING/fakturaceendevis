@@ -33,25 +33,25 @@ export function InvoiceActions({
         variant="outline"
         onClick={() => window.open(`/invoices/${id}/print`, "_blank")}
       >
-        <Printer className="h-4 w-4" /> PDF / Print
+        <Printer className="h-4 w-4" /> PDF / Tisk
       </Button>
       {status !== "sent" && status !== "paid" && (
         <Button
           variant="outline"
           disabled={pending}
-          onClick={() => setStatus("sent", "Invoice marked as sent")}
+          onClick={() => setStatus("sent", "Faktura označena jako odeslaná")}
         >
           {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-          Mark as sent
+          Označit jako odeslané
         </Button>
       )}
       {status !== "paid" && (
         <Button
           disabled={pending}
-          onClick={() => setStatus("paid", "Invoice marked as paid")}
+          onClick={() => setStatus("paid", "Faktura označena jako zaplacená")}
         >
           {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-          Mark as paid
+          Označit jako zaplacené
         </Button>
       )}
       {status !== "cancelled" && status !== "paid" && (
@@ -59,9 +59,9 @@ export function InvoiceActions({
           variant="ghost"
           className="text-muted-foreground hover:text-destructive"
           disabled={pending}
-          onClick={() => setStatus("cancelled", "Invoice cancelled")}
+          onClick={() => setStatus("cancelled", "Faktura stornována")}
         >
-          <XCircle className="h-4 w-4" /> Cancel
+          <XCircle className="h-4 w-4" /> Stornovat
         </Button>
       )}
     </div>

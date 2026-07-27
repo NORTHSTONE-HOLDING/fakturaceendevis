@@ -22,20 +22,20 @@ export default function AuthLayout({
           </Link>
           <div className="max-w-md space-y-6">
             <h1 className="text-4xl font-semibold leading-tight text-white">
-              The premium ERP for modern businesses.
+              Prémiový ERP systém pro moderní firmy.
             </h1>
             <p className="text-white/70">
-              Invoicing, warehouse, quotations and AI automation — beautifully
-              unified in one elegant platform.
+              Fakturace, sklad, cenové nabídky a AI automatizace — elegantně
+              sjednocené v jedné platformě.
             </p>
             <ul className="space-y-2 text-sm text-white/60">
-              <li>• Database-controlled document numbering</li>
-              <li>• Row Level Security &amp; full audit trail</li>
-              <li>• AI assistant with access to your data</li>
+              <li>• Číslování dokladů řízené databází</li>
+              <li>• Zabezpečení na úrovni řádků a kompletní audit</li>
+              <li>• AI asistent s přístupem k vašim datům</li>
             </ul>
           </div>
           <p className="text-xs text-white/40">
-            © {new Date().getFullYear()} ENDEVIS s.r.o. All rights reserved.
+            © {new Date().getFullYear()} ENDEVIS s.r.o. Všechna práva vyhrazena.
           </p>
         </div>
       </div>

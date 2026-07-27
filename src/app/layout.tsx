@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     template: "%s · ENDEVIS InvoiceFlow",
   },
   description:
-    "Premium ERP platform for small and medium businesses — invoicing, warehouse, quotations and AI automation.",
+    "Prémiová ERP platforma pro malé a střední firmy — fakturace, sklad, cenové nabídky a AI automatizace.",
 };
 
 export default function RootLayout({

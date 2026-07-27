@@ -65,10 +65,10 @@ export function Sidebar() {
       <div className="border-t p-4">
         <div className="rounded-md bg-gradient-to-br from-accent to-background p-3">
           <p className="text-xs font-semibold text-foreground">
-            AI automation active
+            AI automatizace aktivní
           </p>
           <p className="mt-1 text-[11px] text-muted-foreground">
-            Daily checks for overdue invoices &amp; stock alerts.
+            Denní kontrola faktur po splatnosti a skladových zásob.
           </p>
         </div>
       </div>

@@ -15,7 +15,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { formatCurrency } from "@/lib/utils";
 
-export const metadata = { title: "Products" };
+export const metadata = { title: "Produkty" };
 
 export default async function ProductsPage() {
   const supabase = await createClient();
@@ -30,8 +30,8 @@ export default async function ProductsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Products & Price List"
-        description={`${list.length} products · prices with VAT and margin computed automatically`}
+        title="Produkty a ceník"
+        description={`${list.length} produktů · ceny s DPH a marže se počítají automaticky`}
       >
         <ProductFormDialog />
       </PageHeader>
@@ -42,20 +42,20 @@ export default async function ProductsPage() {
             <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
               <Package className="h-8 w-8 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
-                No products yet. Add your first item.
+                Zatím žádné produkty. Přidejte svou první položku.
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="text-right">Sale (excl.)</TableHead>
-                  <TableHead className="text-right">VAT</TableHead>
-                  <TableHead className="text-right">Price incl. VAT</TableHead>
-                  <TableHead className="text-right">Margin</TableHead>
-                  <TableHead className="text-right">Stock</TableHead>
+                  <TableHead>Kód</TableHead>
+                  <TableHead>Název</TableHead>
+                  <TableHead className="text-right">Prodej (bez DPH)</TableHead>
+                  <TableHead className="text-right">DPH</TableHead>
+                  <TableHead className="text-right">Cena s DPH</TableHead>
+                  <TableHead className="text-right">Marže</TableHead>
+                  <TableHead className="text-right">Sklad</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

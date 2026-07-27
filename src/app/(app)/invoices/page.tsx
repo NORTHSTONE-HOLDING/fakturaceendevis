@@ -16,7 +16,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
-export const metadata = { title: "Invoices" };
+export const metadata = { title: "Faktury" };
 
 export default async function InvoicesPage() {
   const supabase = await createClient();
@@ -32,10 +32,10 @@ export default async function InvoicesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Invoices" description={`${list.length} invoices`}>
+      <PageHeader title="Faktury" description={`${list.length} faktur`}>
         <Button asChild>
           <Link href="/invoices/new">
-            <Plus className="h-4 w-4" /> New invoice
+            <Plus className="h-4 w-4" /> Nová faktura
           </Link>
         </Button>
       </PageHeader>
@@ -46,11 +46,11 @@ export default async function InvoicesPage() {
             <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
               <Receipt className="h-8 w-8 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
-                No invoices yet. Create your first invoice.
+                Zatím žádné faktury. Vytvořte svou první fakturu.
               </p>
               <Button asChild size="sm">
                 <Link href="/invoices/new">
-                  <Plus className="h-4 w-4" /> New invoice
+                  <Plus className="h-4 w-4" /> Nová faktura
                 </Link>
               </Button>
             </div>
@@ -58,12 +58,12 @@ export default async function InvoicesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Number</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Issued</TableHead>
-                  <TableHead>Due</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Číslo</TableHead>
+                  <TableHead>Zákazník</TableHead>
+                  <TableHead>Vystaveno</TableHead>
+                  <TableHead>Splatnost</TableHead>
+                  <TableHead className="text-right">Celkem</TableHead>
+                  <TableHead>Stav</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import { getDashboardMetrics } from "@/services/dashboard";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
-export const metadata = { title: "Dashboard" };
+export const metadata = { title: "Přehled" };
 
 export default async function DashboardPage() {
   const m = await getDashboardMetrics();
@@ -34,40 +34,40 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Dashboard"
-        description="Real-time overview of your business performance."
+        title="Přehled"
+        description="Přehled výkonnosti vaší firmy v reálném čase."
       >
         <Button asChild>
           <Link href="/invoices/new">
-            <Receipt className="h-4 w-4" /> New invoice
+            <Receipt className="h-4 w-4" /> Nová faktura
           </Link>
         </Button>
       </PageHeader>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="Revenue (paid)"
+          label="Tržby (zaplacené)"
           value={formatCurrency(m.revenue)}
           icon={Wallet}
           tone="gold"
-          hint="All paid invoices"
+          hint="Všechny zaplacené faktury"
         />
         <StatCard
-          label="Outstanding"
+          label="Neuhrazeno"
           value={formatCurrency(m.outstanding)}
           icon={TrendingDown}
           tone="warning"
-          hint="Awaiting payment"
+          hint="Čeká na úhradu"
         />
         <StatCard
-          label="Overdue"
+          label="Po splatnosti"
           value={formatCurrency(m.overdueTotal)}
           icon={AlertTriangle}
           tone="destructive"
-          hint={`${m.overdueCount} invoice(s)`}
+          hint={`${m.overdueCount} faktur`}
         />
         <StatCard
-          label="VAT collected"
+          label="Vybrané DPH"
           value={formatCurrency(m.vatCollected)}
           icon={Percent}
           tone="success"
@@ -77,8 +77,8 @@ export default async function DashboardPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Revenue vs. expenses</CardTitle>
-            <CardDescription>Monthly breakdown for this year</CardDescription>
+            <CardTitle>Tržby vs. náklady</CardTitle>
+            <CardDescription>Měsíční přehled za tento rok</CardDescription>
           </CardHeader>
           <CardContent>
             <RevenueChart data={m.monthlyRevenue} />
@@ -86,19 +86,19 @@ export default async function DashboardPage() {
         </Card>
 
         <div className="grid gap-4">
-          <StatCard label="Invoices" value={String(m.invoiceCount)} icon={Receipt} />
+          <StatCard label="Faktury" value={String(m.invoiceCount)} icon={Receipt} />
           <StatCard
-            label="Open quotations"
+            label="Otevřené nabídky"
             value={String(m.openQuotations)}
             icon={FileText}
           />
           <StatCard
-            label="Customers"
+            label="Zákazníci"
             value={String(m.customerCount)}
             icon={Users}
           />
           <StatCard
-            label="Warehouse alerts"
+            label="Skladová upozornění"
             value={String(m.lowStockCount)}
             icon={Warehouse}
             tone={m.lowStockCount > 0 ? "warning" : "default"}
@@ -109,19 +109,19 @@ export default async function DashboardPage() {
       <Card>
         <CardHeader className="flex-row items-center justify-between space-y-0">
           <div>
-            <CardTitle>Recent documents</CardTitle>
-            <CardDescription>Latest invoices created</CardDescription>
+            <CardTitle>Nedávné doklady</CardTitle>
+            <CardDescription>Naposledy vytvořené faktury</CardDescription>
           </div>
           <Button variant="ghost" size="sm" asChild>
             <Link href="/invoices">
-              View all <ArrowRight className="h-4 w-4" />
+              Zobrazit vše <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
         </CardHeader>
         <CardContent>
           {m.recentInvoices.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">
-              No invoices yet. Create your first one to get started.
+              Zatím žádné faktury. Vytvořte svou první fakturu.
             </p>
           ) : (
             <div className="divide-y">

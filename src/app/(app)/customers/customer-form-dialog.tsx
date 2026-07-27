@@ -28,7 +28,7 @@ function SubmitButton() {
   return (
     <Button type="submit" disabled={pending}>
       {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-      Save customer
+      Uložit zákazníka
     </Button>
   );
 }
@@ -42,7 +42,7 @@ export function CustomerFormDialog() {
 
   useEffect(() => {
     if (state.success) {
-      toast.success("Customer created");
+      toast.success("Zákazník vytvořen");
       setOpen(false);
     } else if (state.error) {
       toast.error(state.error);
@@ -53,28 +53,28 @@ export function CustomerFormDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Plus className="h-4 w-4" /> New customer
+          <Plus className="h-4 w-4" /> Nový zákazník
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>New customer</DialogTitle>
+          <DialogTitle>Nový zákazník</DialogTitle>
           <DialogDescription>
-            Add a company to your customer database.
+            Přidejte firmu do své databáze zákazníků.
           </DialogDescription>
         </DialogHeader>
         <form action={formAction} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="company">Company *</Label>
+              <Label htmlFor="company">Firma *</Label>
               <Input id="company" name="company" required placeholder="Acme s.r.o." />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="contact_person">Contact person</Label>
+              <Label htmlFor="contact_person">Kontaktní osoba</Label>
               <Input id="contact_person" name="contact_person" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input id="email" name="email" type="email" />
             </div>
             <div className="space-y-2">
@@ -82,35 +82,35 @@ export function CustomerFormDialog() {
               <Input id="ico" name="ico" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="dic">DIČ (VAT)</Label>
+              <Label htmlFor="dic">DIČ</Label>
               <Input id="dic" name="dic" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">Telefon</Label>
               <Input id="phone" name="phone" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="website">Website</Label>
+              <Label htmlFor="website">Web</Label>
               <Input id="website" name="website" placeholder="https://" />
             </div>
             <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="address">Address</Label>
+              <Label htmlFor="address">Adresa</Label>
               <Input id="address" name="address" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
+              <Label htmlFor="city">Město</Label>
               <Input id="city" name="city" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="zip">ZIP</Label>
+              <Label htmlFor="zip">PSČ</Label>
               <Input id="zip" name="zip" />
             </div>
             <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="tags">Tags (comma separated)</Label>
+              <Label htmlFor="tags">Štítky (oddělené čárkou)</Label>
               <Input id="tags" name="tags" placeholder="VIP, B2B" />
             </div>
             <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="notes">Notes</Label>
+              <Label htmlFor="notes">Poznámky</Label>
               <Textarea id="notes" name="notes" rows={3} />
             </div>
           </div>

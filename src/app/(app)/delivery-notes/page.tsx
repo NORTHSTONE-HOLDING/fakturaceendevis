@@ -2,15 +2,15 @@ import { Truck } from "lucide-react";
 
 import { ComingSoon } from "@/components/shared/coming-soon";
 
-export const metadata = { title: "Delivery Notes" };
+export const metadata = { title: "Dodací listy" };
 
 export default function DeliveryNotesPage() {
   return (
     <ComingSoon
-      title="Delivery Notes"
-      description="Dispatch documents with DLV-YYYY numbering."
+      title="Dodací listy"
+      description="Dodací a expediční doklady s číslováním DLV-RRRR."
       icon={Truck}
-      features={["Packing slips", "Stock movements", "Signatures"]}
+      features={["Dodací listy", "Skladové pohyby", "Podpisy"]}
     />
   );
 }

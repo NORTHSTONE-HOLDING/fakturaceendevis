@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 
-import { InvoiceDocument } from "@/components/documents/invoice-document";
+import { DocumentTemplate } from "@/components/documents/document-template";
 import { PrintTrigger } from "@/components/documents/print-trigger";
 import { getInvoiceById } from "@/services/invoices";
-import { buildSpdString, qrDataUri } from "@/lib/payment";
+import { invoiceToDocument } from "@/lib/document-mappers";
 
 export default async function InvoicePrintPage({
   params,
@@ -14,26 +14,12 @@ export default async function InvoicePrintPage({
   const detail = await getInvoiceById(id);
   if (!detail) notFound();
 
-  const { invoice, customer, items, company } = detail;
-  const spd = buildSpdString({
-    iban: invoice.iban,
-    amount: Number(invoice.total),
-    currency: invoice.currency,
-    variableSymbol: invoice.variable_symbol,
-    message: invoice.number,
-  });
-  const qr = spd ? await qrDataUri(spd) : null;
+  const document = await invoiceToDocument(detail);
 
   return (
     <>
       <PrintTrigger />
-      <InvoiceDocument
-        invoice={invoice}
-        customer={customer}
-        items={items}
-        company={company}
-        qr={qr}
-      />
+      <DocumentTemplate data={document} />
     </>
   );
 }

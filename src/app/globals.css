@@ -6,31 +6,32 @@
   :root {
     /* Base surfaces */
     --background: 0 0% 100%;
-    --foreground: 222 22% 12%;
+    --foreground: 0 0% 13%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 22% 12%;
+    --card-foreground: 0 0% 13%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 22% 12%;
+    --popover-foreground: 0 0% 13%;
 
-    /* Primary = Gold */
-    --primary: 38 52% 50%;
-    --primary-foreground: 40 40% 98%;
-    --gold: 38 52% 50%;
-    --gold-foreground: 40 40% 98%;
+    /* Primary = Gold #C89B3C */
+    --primary: 41 56% 51%;
+    --primary-foreground: 0 0% 100%;
+    --gold: 41 56% 51%;
+    --gold-foreground: 0 0% 100%;
 
-    /* Secondary = Graphite */
-    --secondary: 220 14% 20%;
-    --secondary-foreground: 210 20% 98%;
-    --graphite: 220 14% 20%;
-    --graphite-foreground: 210 20% 98%;
+    /* Secondary = Graphite #181818 */
+    --secondary: 0 0% 9%;
+    --secondary-foreground: 0 0% 98%;
+    --graphite: 0 0% 9%;
+    --graphite-foreground: 0 0% 98%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    /* Surface = Light Gray #F7F7F7 */
+    --muted: 0 0% 97%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 40 44% 96%;
-    --accent-foreground: 38 52% 30%;
+    --accent: 41 54% 95%;
+    --accent-foreground: 41 60% 28%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
@@ -38,9 +39,9 @@
     --success: 142 62% 40%;
     --warning: 38 92% 50%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 38 52% 50%;
+    --border: 0 0% 91%;
+    --input: 0 0% 91%;
+    --ring: 41 56% 51%;
 
     /* 16px radius */
     --radius: 1rem;
@@ -56,15 +57,15 @@
     --popover: 222 20% 11%;
     --popover-foreground: 210 20% 98%;
 
-    --primary: 38 55% 55%;
-    --primary-foreground: 222 22% 10%;
-    --gold: 38 55% 55%;
-    --gold-foreground: 222 22% 10%;
+    --primary: 41 58% 56%;
+    --primary-foreground: 0 0% 8%;
+    --gold: 41 58% 56%;
+    --gold-foreground: 0 0% 8%;
 
-    --secondary: 220 14% 90%;
-    --secondary-foreground: 222 22% 12%;
-    --graphite: 220 14% 90%;
-    --graphite-foreground: 222 22% 12%;
+    --secondary: 0 0% 90%;
+    --secondary-foreground: 0 0% 10%;
+    --graphite: 0 0% 90%;
+    --graphite-foreground: 0 0% 10%;
 
     --muted: 220 14% 16%;
     --muted-foreground: 220 10% 65%;
@@ -112,5 +113,30 @@
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
     @apply rounded-full bg-border;
+  }
+}
+
+/* A4 document printing — identical margins, no overflow, perfect printing. */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+  html,
+  body {
+    background: #ffffff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .document-sheet {
+    max-width: none !important;
+    width: 100% !important;
+    box-shadow: none !important;
+  }
+  .document-sheet .p-6,
+  .document-sheet.p-6,
+  .document-sheet [class*="sm:p-10"] {
+    padding: 0 !important;
   }
 }

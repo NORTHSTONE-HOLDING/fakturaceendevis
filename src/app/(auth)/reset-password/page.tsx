@@ -25,7 +25,7 @@ export default function ResetPasswordPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Password updated");
+    toast.success("Heslo bylo změněno");
     router.push("/dashboard");
   }
 
@@ -33,15 +33,15 @@ export default function ResetPasswordPage() {
     <div className="space-y-6">
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-tight">
-          Set a new password
+          Nastavení nového hesla
         </h2>
         <p className="text-sm text-muted-foreground">
-          Open this page from the reset link in your email.
+          Tuto stránku otevřete z odkazu pro obnovení ve svém e-mailu.
         </p>
       </div>
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="password">New password</Label>
+          <Label htmlFor="password">Nové heslo</Label>
           <Input
             id="password"
             type="password"
@@ -53,7 +53,7 @@ export default function ResetPasswordPage() {
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-          Update password
+          Změnit heslo
         </Button>
       </form>
     </div>

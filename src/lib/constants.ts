@@ -28,36 +28,36 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, group: "core" },
-  { label: "Customers", href: "/customers", icon: Users, group: "core" },
-  { label: "Products", href: "/products", icon: Package, group: "inventory" },
-  { label: "Price Lists", href: "/price-lists", icon: Tags, group: "inventory" },
-  { label: "Warehouse", href: "/warehouse", icon: Warehouse, group: "inventory" },
-  { label: "Quotations", href: "/quotations", icon: FileText, group: "sales" },
-  { label: "Budgets", href: "/budgets", icon: Wallet, group: "sales" },
-  { label: "Invoices", href: "/invoices", icon: Receipt, group: "sales" },
-  { label: "Advance Invoices", href: "/advance-invoices", icon: FileStack, group: "sales" },
-  { label: "Orders", href: "/orders", icon: ShoppingCart, group: "sales" },
-  { label: "Delivery Notes", href: "/delivery-notes", icon: Truck, group: "sales" },
-  { label: "Documents", href: "/documents", icon: FolderArchive, group: "system" },
-  { label: "Archive", href: "/archive", icon: Archive, group: "system" },
-  { label: "AI Assistant", href: "/assistant", icon: Bot, group: "system" },
-  { label: "Settings", href: "/settings", icon: Settings, group: "system" },
+  { label: "Přehled", href: "/dashboard", icon: LayoutDashboard, group: "core" },
+  { label: "Zákazníci", href: "/customers", icon: Users, group: "core" },
+  { label: "Produkty", href: "/products", icon: Package, group: "inventory" },
+  { label: "Ceník", href: "/price-lists", icon: Tags, group: "inventory" },
+  { label: "Sklad", href: "/warehouse", icon: Warehouse, group: "inventory" },
+  { label: "Cenové nabídky", href: "/quotations", icon: FileText, group: "sales" },
+  { label: "Rozpočty", href: "/budgets", icon: Wallet, group: "sales" },
+  { label: "Faktury", href: "/invoices", icon: Receipt, group: "sales" },
+  { label: "Zálohové faktury", href: "/advance-invoices", icon: FileStack, group: "sales" },
+  { label: "Objednávky", href: "/orders", icon: ShoppingCart, group: "sales" },
+  { label: "Dodací listy", href: "/delivery-notes", icon: Truck, group: "sales" },
+  { label: "Dokumenty", href: "/documents", icon: FolderArchive, group: "system" },
+  { label: "Archiv", href: "/archive", icon: Archive, group: "system" },
+  { label: "AI Asistent", href: "/assistant", icon: Bot, group: "system" },
+  { label: "Nastavení", href: "/settings", icon: Settings, group: "system" },
 ];
 
 export const NAV_GROUPS: { id: NavItem["group"]; label: string }[] = [
-  { id: "core", label: "Overview" },
-  { id: "sales", label: "Sales" },
-  { id: "inventory", label: "Inventory" },
-  { id: "system", label: "System" },
+  { id: "core", label: "Přehled" },
+  { id: "sales", label: "Prodej" },
+  { id: "inventory", label: "Sklad" },
+  { id: "system", label: "Systém" },
 ];
 
 export const ROLE_LABELS: Record<AppRole, string> = {
-  administrator: "Administrator",
-  manager: "Manager",
-  accountant: "Accountant",
-  warehouse: "Warehouse",
-  sales: "Sales",
+  administrator: "Administrátor",
+  manager: "Manažer",
+  accountant: "Účetní",
+  warehouse: "Skladník",
+  sales: "Obchodník",
 };
 
 export const VAT_RATES = [0, 12, 21] as const;

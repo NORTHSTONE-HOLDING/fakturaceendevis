@@ -2,7 +2,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { InvoiceForm } from "./invoice-form";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata = { title: "New invoice" };
+export const metadata = { title: "Nová faktura" };
 
 export default async function NewInvoicePage() {
   const supabase = await createClient();
@@ -15,8 +15,8 @@ export default async function NewInvoicePage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <PageHeader
-        title="New invoice"
-        description="The invoice number is generated automatically by the database."
+        title="Nová faktura"
+        description="Číslo faktury generuje automaticky databáze."
       />
       <InvoiceForm customers={customers ?? []} />
     </div>

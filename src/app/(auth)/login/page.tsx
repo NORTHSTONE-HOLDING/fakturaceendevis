@@ -16,7 +16,7 @@ function SubmitButton() {
   return (
     <Button type="submit" className="w-full" disabled={pending}>
       {pending && <Loader2 className="animate-spin" />}
-      Sign in
+      Přihlásit se
     </Button>
   );
 }
@@ -29,34 +29,34 @@ function LoginForm() {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h2 className="text-2xl font-semibold tracking-tight">Welcome back</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Vítejte zpět</h2>
         <p className="text-sm text-muted-foreground">
-          Sign in to your ENDEVIS InvoiceFlow account.
+          Přihlaste se ke svému účtu ENDEVIS InvoiceFlow.
         </p>
       </div>
 
       <form action={formAction} className="space-y-4">
         <input type="hidden" name="redirectTo" value={redirectTo} />
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">E-mail</Label>
           <Input
             id="email"
             name="email"
             type="email"
             autoComplete="email"
-            placeholder="you@company.com"
+            placeholder="vy@firma.cz"
             defaultValue="admin@endevis.cz"
             required
           />
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Heslo</Label>
             <Link
               href="/forgot-password"
               className="text-xs font-medium text-primary hover:underline"
             >
-              Forgot password?
+              Zapomněli jste heslo?
             </Link>
           </div>
           <Input
@@ -81,7 +81,7 @@ function LoginForm() {
       </form>
 
       <p className="text-center text-xs text-muted-foreground">
-        Demo credentials are pre-filled for local development.
+        Demo přihlašovací údaje jsou předvyplněny pro lokální vývoj.
       </p>
     </div>
   );

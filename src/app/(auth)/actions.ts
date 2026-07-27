@@ -19,7 +19,7 @@ export async function signInAction(
   const redirectTo = String(formData.get("redirectTo") ?? "/dashboard");
 
   if (!email || !password) {
-    return { error: "Please enter your email and password." };
+    return { error: "Zadejte prosím e-mail a heslo." };
   }
 
   const supabase = await createClient();
@@ -38,7 +38,7 @@ export async function requestPasswordResetAction(
   formData: FormData,
 ): Promise<AuthState> {
   const email = String(formData.get("email") ?? "").trim();
-  if (!email) return { error: "Please enter your email address." };
+  if (!email) return { error: "Zadejte prosím svou e-mailovou adresu." };
 
   const supabase = await createClient();
   const origin = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
@@ -49,7 +49,7 @@ export async function requestPasswordResetAction(
   if (error) return { error: error.message };
   return {
     success:
-      "If an account exists for that email, a password reset link has been sent.",
+      "Pokud pro tento e-mail existuje účet, odkaz pro obnovení hesla byl odeslán.",
   };
 }
 

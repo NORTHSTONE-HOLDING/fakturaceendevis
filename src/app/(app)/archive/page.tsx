@@ -2,15 +2,15 @@ import { Archive } from "lucide-react";
 
 import { ComingSoon } from "@/components/shared/coming-soon";
 
-export const metadata = { title: "Archive" };
+export const metadata = { title: "Archiv" };
 
 export default function ArchivePage() {
   return (
     <ComingSoon
-      title="Archive"
-      description="Soft-deleted documents with versioning and restore."
+      title="Archiv"
+      description="Smazané dokumenty s verzováním a možností obnovení."
       icon={Archive}
-      features={["Soft delete", "Versioning", "Restore", "Export"]}
+      features={["Měkké mazání", "Verzování", "Obnovení", "Export"]}
     />
   );
 }

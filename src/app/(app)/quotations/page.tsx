@@ -14,7 +14,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
-export const metadata = { title: "Quotations" };
+export const metadata = { title: "Cenové nabídky" };
 
 export default async function QuotationsPage() {
   const supabase = await createClient();
@@ -31,8 +31,8 @@ export default async function QuotationsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Quotations"
-        description="Professional quotes — convert to orders or invoices in one click."
+        title="Cenové nabídky"
+        description="Profesionální nabídky — převod na objednávku nebo fakturu jedním kliknutím."
       />
       <Card>
         <CardContent className="p-0">
@@ -40,18 +40,18 @@ export default async function QuotationsPage() {
             <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
               <FileText className="h-8 w-8 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
-                No quotations yet.
+                Zatím žádné cenové nabídky.
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Number</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Valid until</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Číslo</TableHead>
+                  <TableHead>Zákazník</TableHead>
+                  <TableHead>Platnost do</TableHead>
+                  <TableHead className="text-right">Celkem</TableHead>
+                  <TableHead>Stav</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

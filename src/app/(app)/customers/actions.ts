@@ -14,7 +14,7 @@ export async function createCustomerAction(
   formData: FormData,
 ): Promise<CustomerFormState> {
   const company = String(formData.get("company") ?? "").trim();
-  if (!company) return { error: "Company name is required." };
+  if (!company) return { error: "Název firmy je povinný." };
 
   const supabase = await createClient();
   const {

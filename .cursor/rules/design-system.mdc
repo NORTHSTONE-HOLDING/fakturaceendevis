@@ -1,0 +1,55 @@
+---
+description: ENDEVIS InvoiceFlow global design system — apply to every page, dialog, form, table, PDF and document.
+alwaysApply: true
+---
+
+# ENDEVIS Design System (authoritative)
+
+The ENDEVIS invoice document is the **Design System** of the application. Every
+new page, dialog, form, table, PDF and document MUST follow the same spacing,
+typography, colors, icons and visual language. **Never introduce a different
+style.**
+
+## Colors (use CSS variables, never hard-coded hex in components)
+- Primary — Gold `#C89B3C` (`--gold` / `--primary`, Tailwind `primary`/`gold`)
+- Secondary — Graphite `#181818` (`--graphite` / `--secondary`)
+- Background — White `#FFFFFF` (`--background`)
+- Surface — Light Gray `#F7F7F7` (`--muted`)
+- Text — Dark Gray (`--foreground` / `--muted-foreground`)
+- The **Grand Total** and primary actions are always highlighted in Gold.
+
+## Typography
+- Font: **Inter** (`--font-sans`). Headings bold, body regular.
+- Generous, consistent spacing. Modern, minimal, premium (Apple + Stripe + Linear).
+
+## Icons
+- **Lucide** icons only. **Outline** style only. No colorful icons.
+- Same icon size and spacing everywhere (`h-4 w-4` in dense UI, `h-5 w-5` for emphasis).
+
+## Radius & surfaces
+- Radius 16px (`--radius`, Tailwind `rounded-lg`). Use `Card` + `card-elevated` for panels.
+
+## Documents (Invoice, Advance/Proforma Invoice, Credit Note, Quotation, Budget,
+## Customer/Supplier Order, Delivery Note, Acceptance Protocol, Service Report)
+All documents share ONE template (`src/components/documents/document-template.tsx`)
+and MUST keep an identical visual identity:
+1. Header: ENDEVIS logo + gold icon + slogan (left); large Czech document title +
+   number/issue/due/tax dates (right).
+2. Parties: Dodavatel (left) / Odběratel (right) — Company, Address, IČO, DIČ,
+   Email, Phone, Website.
+3. Information bar: outline Lucide icons (number, currency, VS, payment method,
+   due date, …) — identical icon style across all documents.
+4. Items table: dark header, white rows, thin borders — columns Popis, Množství,
+   MJ, Cena/j., DPH, Sleva, Celkem.
+5. Totals: Mezisoučet, DPH, Sleva, Doprava, **Celkem k úhradě** (highlighted gold).
+6. Payment card: IBAN, SWIFT, Banka, QR platba, Variabilní symbol, Způsob platby,
+   Splatnost.
+7. Footer: Address, Email, Website, Phone, IČO, DIČ, legal information.
+
+## PDF
+- Every document renders a professional **A4** PDF with identical margins, no page
+  overflow, perfect printing. Documents also render responsively (desktop/tablet/
+  mobile) in-app; the PDF always remains A4.
+
+## Language
+- The entire application UI is in **Czech**. Translate all new strings.
