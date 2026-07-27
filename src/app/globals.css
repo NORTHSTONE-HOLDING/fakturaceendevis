@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base surfaces */
+    --background: 0 0% 100%;
+    --foreground: 222 22% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 22% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 22% 12%;
+
+    /* Primary = Gold */
+    --primary: 38 52% 50%;
+    --primary-foreground: 40 40% 98%;
+    --gold: 38 52% 50%;
+    --gold-foreground: 40 40% 98%;
+
+    /* Secondary = Graphite */
+    --secondary: 220 14% 20%;
+    --secondary-foreground: 210 20% 98%;
+    --graphite: 220 14% 20%;
+    --graphite-foreground: 210 20% 98%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+
+    --accent: 40 44% 96%;
+    --accent-foreground: 38 52% 30%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 62% 40%;
+    --warning: 38 92% 50%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 38 52% 50%;
+
+    /* 16px radius */
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 222 22% 8%;
+    --foreground: 210 20% 98%;
+
+    --card: 222 20% 11%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 222 20% 11%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 38 55% 55%;
+    --primary-foreground: 222 22% 10%;
+    --gold: 38 55% 55%;
+    --gold-foreground: 222 22% 10%;
+
+    --secondary: 220 14% 90%;
+    --secondary-foreground: 222 22% 12%;
+    --graphite: 220 14% 90%;
+    --graphite-foreground: 222 22% 12%;
+
+    --muted: 220 14% 16%;
+    --muted-foreground: 220 10% 65%;
+
+    --accent: 38 30% 18%;
+    --accent-foreground: 40 44% 90%;
+
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 55% 45%;
+    --warning: 38 92% 55%;
+
+    --border: 220 14% 20%;
+    --input: 220 14% 20%;
+    --ring: 38 55% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    @apply bg-gradient-to-br from-[hsl(42,60%,58%)] to-[hsl(34,52%,44%)] bg-clip-text text-transparent;
+  }
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl;
+  }
+  .card-elevated {
+    box-shadow:
+      0 1px 2px rgba(16, 24, 40, 0.04),
+      0 4px 16px rgba(16, 24, 40, 0.06);
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-border;
+  }
+}
