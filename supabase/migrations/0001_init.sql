@@ -442,3 +442,20 @@ create policy "notifications_write" on public.notifications
 -- Audit log: read-only for authenticated users
 create policy "audit_select" on public.audit_log
   for select to authenticated using (true);
+
+-- ----------------------------------------------------------------------------
+-- Grants
+-- RLS controls row access, but roles still need table-level privileges.
+-- ----------------------------------------------------------------------------
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on all tables in schema public to authenticated;
+grant usage, select on all sequences in schema public to authenticated;
+grant execute on all functions in schema public to anon, authenticated;
+
+-- Ensure future objects inherit the same grants.
+alter default privileges in schema public
+  grant select, insert, update, delete on tables to authenticated;
+alter default privileges in schema public
+  grant usage, select on sequences to authenticated;
+alter default privileges in schema public
+  grant execute on functions to anon, authenticated;

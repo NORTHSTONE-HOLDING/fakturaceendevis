@@ -8,6 +8,10 @@ const PUBLIC_ROUTES = ["/login", "/forgot-password", "/reset-password", "/auth"]
 /**
  * Refreshes the Supabase auth session on every request and guards
  * authenticated routes. Unauthenticated users are redirected to /login.
+ *
+ * IMPORTANT: any cookies written while refreshing the session must be copied
+ * onto redirect responses too — otherwise the rotated session token is dropped
+ * and the browser bounces between /login and /dashboard.
  */
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -40,18 +44,27 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isPublic = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
 
-  if (!user && !isPublic) {
+  // Build a redirect that preserves any cookies set during session refresh.
+  const redirect = (pathTarget: string, withRedirectTo = false) => {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("redirectTo", pathname);
-    return NextResponse.redirect(url);
+    url.pathname = pathTarget;
+    url.search = "";
+    if (withRedirectTo && pathname !== "/") {
+      url.searchParams.set("redirectTo", pathname);
+    }
+    const response = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      response.cookies.set(cookie);
+    });
+    return response;
+  };
+
+  if (!user && !isPublic) {
+    return redirect("/login", true);
   }
 
   if (user && (pathname === "/login" || pathname === "/")) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    url.search = "";
-    return NextResponse.redirect(url);
+    return redirect("/dashboard");
   }
 
   return supabaseResponse;
