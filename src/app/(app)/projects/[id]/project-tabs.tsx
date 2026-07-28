@@ -422,7 +422,10 @@ function DiaryForm({ projectId }: { projectId: string }) {
           <Input value={form.problems} onChange={(e) => set("problems", e.target.value)} />
         </div>
         {form.ai_summary && (
-          <div className="sm:col-span-4">
+          <div className="space-y-1.5 sm:col-span-4">
+            <Label className="flex items-center gap-1.5 text-xs text-primary">
+              <Sparkles className="h-3.5 w-3.5" /> AI souhrn zápisu (upravitelný)
+            </Label>
             <Textarea rows={3} value={form.ai_summary} onChange={(e) => set("ai_summary", e.target.value)} />
           </div>
         )}
