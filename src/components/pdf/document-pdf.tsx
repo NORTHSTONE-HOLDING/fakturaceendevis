@@ -250,7 +250,7 @@ const s = StyleSheet.create({
     overflow: "hidden",
   },
   summaryCell: {
-    width: mm(CONTENT_MM / 2),
+    width: mm(CONTENT_MM / 2 - 0.5),
     paddingVertical: mm(2.5),
     paddingHorizontal: mm(3.5),
     borderBottomWidth: 0.5,
@@ -267,12 +267,12 @@ const s = StyleSheet.create({
     padding: mm(3.5),
     fontSize: 8.5,
   },
-  signRow: { flexDirection: "row", gap: mm(6), marginTop: mm(10) },
+  signRow: { flexDirection: "row", gap: mm(6), marginTop: mm(8) },
   signBox: { width: mm(94) },
   signLine: {
     borderTopWidth: 0.75,
     borderTopColor: GRAPHITE,
-    marginTop: mm(12),
+    marginTop: mm(10),
     paddingTop: mm(1.5),
   },
   signRole: { fontSize: 8, fontWeight: 700 },
