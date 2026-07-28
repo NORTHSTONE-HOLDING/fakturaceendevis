@@ -3,12 +3,10 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 import { InvoiceActions } from "./invoice-actions";
-import { DocumentTemplate } from "@/components/documents/document-template";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getInvoiceById } from "@/services/invoices";
-import { invoiceToDocument } from "@/lib/document-mappers";
 
 export default async function InvoiceDetailPage({
   params,
@@ -20,7 +18,6 @@ export default async function InvoiceDetailPage({
   if (!detail) notFound();
 
   const { invoice, customer } = detail;
-  const document = await invoiceToDocument(detail);
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -46,9 +43,17 @@ export default async function InvoiceDetailPage({
         <InvoiceActions id={invoice.id} status={invoice.status} />
       </div>
 
+      {/* Preview = Print: the preview IS the generated PDF, so the on-screen
+          document is byte-for-byte identical to the exported/printed file. */}
       <Card className="overflow-hidden">
         <CardContent className="p-0">
-          <DocumentTemplate data={document} />
+          <div className="mx-auto aspect-[210/297] w-full max-w-[820px] bg-muted">
+            <iframe
+              title={`Náhled ${invoice.number}`}
+              src={`/invoices/${invoice.id}/pdf#toolbar=0&navpanes=0&view=FitH`}
+              className="h-full w-full"
+            />
+          </div>
         </CardContent>
       </Card>
     </div>

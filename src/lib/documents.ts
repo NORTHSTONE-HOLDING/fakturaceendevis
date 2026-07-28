@@ -2,7 +2,7 @@
  * Unified document model for ENDEVIS InvoiceFlow.
  *
  * Every document type (invoice, quotation, delivery note, …) is normalized into
- * `DocumentData` and rendered by the single shared `DocumentTemplate`, so they
+ * `DocumentData` and rendered by the single shared `DocumentPdf` engine, so they
  * all share an identical visual identity.
  */
 
@@ -124,6 +124,8 @@ export interface DocumentPayment {
 
 export interface DocumentData {
   type: DocumentDefType;
+  /** Uploaded company logo (from Company Settings). Falls back to the ENDEVIS mark. */
+  logoUrl?: string | null;
   number: string;
   issueDate: string;
   dueDate?: string | null;

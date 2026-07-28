@@ -1,6 +1,7 @@
-import { Building2, CreditCard, Bot, Mail } from "lucide-react";
+import { Building2, CreditCard, Bot, Mail, Image as ImageIcon } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
+import { LogoUpload } from "./logo-upload";
 import {
   Card,
   CardContent,
@@ -37,6 +38,20 @@ export default async function SettingsPage() {
         title="Nastavení"
         description="Profil firmy, platební údaje, číslování dokladů a integrace."
       />
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ImageIcon className="h-4 w-4 text-primary" /> Logo firmy
+          </CardTitle>
+          <CardDescription>
+            Nahrané logo se automaticky propíše do hlavičky všech dokladů (PDF).
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <LogoUpload logoUrl={company?.logo_url ?? null} />
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>

@@ -49,20 +49,21 @@ const MM = 2.83465; // 1 mm in PDF points
 const mm = (v: number) => v * MM;
 
 const PAGE_W = 210;
-const MARGIN = mm(12); // 12 mm on every side
-const HEADER_H = mm(26); // fixed header band
-const FOOTER_H = mm(20); // fixed footer band
-const CONTENT_MM = PAGE_W - 12 * 2; // 186 mm printable width
+const MARGIN_MM = 8; // 8 mm on every side
+const MARGIN = mm(MARGIN_MM);
+const HEADER_H = mm(24); // fixed header band
+const FOOTER_H = mm(18); // fixed footer band
+const CONTENT_MM = PAGE_W - MARGIN_MM * 2; // 194 mm printable width
 
-/* Fixed item-table column widths (mm) — sum to the 186 mm content width. */
+/* Fixed item-table column widths (mm) — sum to the 194 mm content width. */
 const COLS = {
-  desc: mm(69),
+  desc: mm(73),
   qty: mm(18),
   unit: mm(12),
-  price: mm(27),
+  price: mm(29),
   vat: mm(14),
   discount: mm(14),
-  total: mm(32),
+  total: mm(34),
 };
 
 const s = StyleSheet.create({
@@ -99,6 +100,8 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   logoLetter: { color: GRAPHITE, fontSize: 24, fontWeight: 700 },
+  /* Uploaded logo — fixed max box, aspect ratio preserved (never stretched). */
+  logoImg: { height: mm(15), maxWidth: mm(50), objectFit: "contain" },
   brandName: { fontSize: 15, fontWeight: 700, letterSpacing: 0.3 },
   brandSub: { fontSize: 9, fontWeight: 600, color: GOLD },
   brandSlogan: { fontSize: 7.5, color: MUTED, marginTop: mm(0.4) },
@@ -121,8 +124,8 @@ const s = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  footerCol: { width: mm(58), fontSize: 7.5, color: MUTED },
-  footerColRight: { width: mm(58), fontSize: 7.5, color: MUTED, textAlign: "right" },
+  footerCol: { width: mm(62), fontSize: 7.5, color: MUTED },
+  footerColRight: { width: mm(62), fontSize: 7.5, color: MUTED, textAlign: "right" },
   footerStrong: { color: GRAPHITE, fontWeight: 700, marginBottom: mm(0.7) },
   pageNo: {
     position: "absolute",
@@ -143,7 +146,7 @@ const s = StyleSheet.create({
     paddingTop: mm(5),
     marginBottom: mm(6),
   },
-  partyCol: { width: mm(88) },
+  partyCol: { width: mm(92) },
   partyLabel: {
     fontSize: 7.5,
     fontWeight: 700,
@@ -189,7 +192,7 @@ const s = StyleSheet.create({
   /* Summary + payment (kept together, below table) — fixed mm widths */
   summaryWrap: { flexDirection: "row", gap: mm(6), marginTop: mm(6) },
   payCard: {
-    width: mm(106),
+    width: mm(110),
     borderWidth: 0.5,
     borderColor: GOLD,
     borderRadius: mm(3),
@@ -205,7 +208,7 @@ const s = StyleSheet.create({
   qr: { width: mm(26), height: mm(26) },
   qrCaption: { fontSize: 6.5, color: MUTED, textAlign: "center", marginTop: mm(0.7) },
 
-  totalsCard: { width: mm(74), borderWidth: 0.5, borderColor: BORDER, borderRadius: mm(3), padding: mm(3.5) },
+  totalsCard: { width: mm(78), borderWidth: 0.5, borderColor: BORDER, borderRadius: mm(3), padding: mm(3.5) },
   totalRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: mm(1) },
   totalLabel: { color: MUTED, fontSize: 9 },
   grand: {
@@ -249,14 +252,20 @@ function Header({ data }: { data: DocumentData }) {
   return (
     <View style={s.header} fixed>
       <View style={s.brandRow}>
-        <View style={s.logoBox}>
-          <Text style={s.logoLetter}>E</Text>
-        </View>
-        <View>
-          <Text style={s.brandName}>ENDEVIS</Text>
-          <Text style={s.brandSub}>InvoiceFlow</Text>
-          <Text style={s.brandSlogan}>Premium fakturační a ERP systém</Text>
-        </View>
+        {data.logoUrl ? (
+          <Image src={data.logoUrl} style={s.logoImg} />
+        ) : (
+          <>
+            <View style={s.logoBox}>
+              <Text style={s.logoLetter}>E</Text>
+            </View>
+            <View>
+              <Text style={s.brandName}>ENDEVIS</Text>
+              <Text style={s.brandSub}>InvoiceFlow</Text>
+              <Text style={s.brandSlogan}>Premium fakturační a ERP systém</Text>
+            </View>
+          </>
+        )}
       </View>
       <View>
         <Text style={s.docTitle}>{def.title}</Text>

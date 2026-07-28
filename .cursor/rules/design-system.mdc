@@ -31,8 +31,11 @@ style.**
 
 ## Documents (Invoice, Advance/Proforma Invoice, Credit Note, Quotation, Budget,
 ## Customer/Supplier Order, Delivery Note, Acceptance Protocol, Service Report)
-All documents share ONE template (`src/components/documents/document-template.tsx`)
-and MUST keep an identical visual identity:
+All documents share ONE print engine (`src/components/pdf/document-pdf.tsx`,
+React PDF). The in-app preview embeds the generated PDF, so preview = print =
+exported file are byte-for-byte identical. Page = A4, fixed 8mm margins, absolute
+mm layout; only the items table grows. The company logo is uploaded in Settings
+and injected globally into the header. MUST keep an identical visual identity:
 1. Header: ENDEVIS logo + gold icon + slogan (left); large Czech document title +
    number/issue/due/tax dates (right).
 2. Parties: Dodavatel (left) / Odběratel (right) — Company, Address, IČO, DIČ,

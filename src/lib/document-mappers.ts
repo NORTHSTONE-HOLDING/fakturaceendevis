@@ -6,7 +6,7 @@ const PAYMENT_METHOD = "Bankovní převod";
 
 /**
  * Maps a persisted invoice (+ relations) into the unified DocumentData shape
- * consumed by DocumentTemplate. Generates the QR platba code server-side.
+ * consumed by the DocumentPdf engine. Generates the QR platba code server-side.
  */
 export async function invoiceToDocument(
   detail: InvoiceDetail,
@@ -24,6 +24,7 @@ export async function invoiceToDocument(
 
   return {
     type: "invoice",
+    logoUrl: company?.logo_url ?? null,
     number: invoice.number,
     issueDate: invoice.issue_date,
     dueDate: invoice.due_date,
