@@ -126,20 +126,26 @@ const s = StyleSheet.create({
     color: MUTED,
   },
 
-  /* Parties */
-  parties: { flexDirection: "row", gap: 12, marginBottom: 12 },
-  partyCard: {
-    flex: 1,
-    minHeight: 92,
-    borderWidth: 1,
-    borderColor: BORDER,
-    borderRadius: 12,
-    backgroundColor: LIGHT,
-    padding: 10,
+  /* Parties — borderless, thin divider above, two 50% columns, generous space */
+  parties: {
+    flexDirection: "row",
+    gap: 28,
+    borderTopWidth: 1,
+    borderTopColor: BORDER,
+    paddingTop: 14,
+    marginBottom: 18,
   },
-  partyLabel: { fontSize: 7.5, fontWeight: 700, color: GOLD, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 3 },
-  partyName: { fontSize: 11, fontWeight: 700, marginBottom: 2 },
-  partyLine: { fontSize: 8.5, color: MUTED },
+  partyCol: { flexBasis: "50%", flexGrow: 1 },
+  partyLabel: {
+    fontSize: 7.5,
+    fontWeight: 700,
+    color: GOLD,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginBottom: 5,
+  },
+  partyName: { fontSize: 12, fontWeight: 600, marginBottom: 4 },
+  partyLine: { fontSize: 8.5, color: MUTED, marginBottom: 1.5 },
 
   /* Info bar (single fixed-height row) */
   infoBar: {
@@ -263,7 +269,7 @@ function Header({ data }: { data: DocumentData }) {
 
 function PartyCard({ label, party }: { label: string; party: DocumentParty }) {
   return (
-    <View style={s.partyCard}>
+    <View style={s.partyCol}>
       <Text style={s.partyLabel}>{label}</Text>
       <Text style={s.partyName}>{party.name}</Text>
       {addr(party) ? <Text style={s.partyLine}>{addr(party)}</Text> : null}

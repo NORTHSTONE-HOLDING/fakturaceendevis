@@ -73,12 +73,14 @@ export function DocumentTemplate({ data }: { data: DocumentData }) {
           </div>
         </header>
 
-        <div className="my-8 h-px w-full bg-border" />
+        <div className="mt-8" />
 
-        {/* ── Parties ────────────────────────────────────────────── */}
-        <section className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <PartyBlock title="Dodavatel" party={data.supplier} />
-          <PartyBlock title="Odběratel" party={data.customer ?? { name: "—" }} />
+        {/* ── Parties (borderless, thin divider above, two 50% columns) ── */}
+        <section className="border-t pt-8">
+          <div className="grid grid-cols-2 gap-10">
+            <PartyBlock title="Dodavatel" party={data.supplier} />
+            <PartyBlock title="Odběratel" party={data.customer ?? { name: "—" }} />
+          </div>
         </section>
 
         {/* ── Information bar ────────────────────────────────────── */}
@@ -253,12 +255,12 @@ function MetaRow({ label, value }: { label: string; value: string }) {
 
 function PartyBlock({ title, party }: { title: string; party: DocumentParty }) {
   return (
-    <div className="rounded-2xl border bg-muted/40 p-5">
-      <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-primary">
+    <div>
+      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-primary">
         {title}
       </p>
-      <p className="text-base font-bold">{party.name}</p>
-      <div className="mt-1.5 space-y-0.5 text-xs text-muted-foreground">
+      <p className="text-lg font-semibold tracking-tight">{party.name}</p>
+      <div className="mt-2 space-y-1 text-xs leading-relaxed text-muted-foreground">
         {party.address && <p>{party.address}</p>}
         {(party.zip || party.city) && (
           <p>
