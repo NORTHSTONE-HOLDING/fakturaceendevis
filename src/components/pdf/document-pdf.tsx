@@ -40,21 +40,29 @@ const BORDER = "#E4E4E4";
 const MUTED = "#6B6B6B";
 const WHITE = "#FFFFFF";
 
-/* A4 geometry (pt). 1mm ≈ 2.83465pt. 12mm margins. */
-const MM = 2.83465;
-const MARGIN = 12 * MM;
-const HEADER_H = 74;
-const FOOTER_H = 58;
+/* ── Absolute print geometry — everything in millimetres ──────────────────
+ * A4 = 210 × 297 mm. All widths/heights/margins/spacing are expressed in mm
+ * (converted to PDF points). No percentages: print layout is fully absolute.
+ * Only the items table may grow in height.
+ */
+const MM = 2.83465; // 1 mm in PDF points
+const mm = (v: number) => v * MM;
 
-/* Fixed item-table column widths (content width = 595.28 − 2*margin ≈ 527pt). */
+const PAGE_W = 210;
+const MARGIN = mm(12); // 12 mm on every side
+const HEADER_H = mm(26); // fixed header band
+const FOOTER_H = mm(20); // fixed footer band
+const CONTENT_MM = PAGE_W - 12 * 2; // 186 mm printable width
+
+/* Fixed item-table column widths (mm) — sum to the 186 mm content width. */
 const COLS = {
-  desc: 195,
-  qty: 50,
-  unit: 34,
-  price: 76,
-  vat: 40,
-  discount: 40,
-  total: 92,
+  desc: mm(69),
+  qty: mm(18),
+  unit: mm(12),
+  price: mm(27),
+  vat: mm(14),
+  discount: mm(14),
+  total: mm(32),
 };
 
 const s = StyleSheet.create({
@@ -67,25 +75,25 @@ const s = StyleSheet.create({
     paddingHorizontal: MARGIN,
     lineHeight: 1.35,
   },
-  /* Header (fixed, repeats every page) */
+  /* Header (fixed, repeats every page) — absolute mm band */
   header: {
     position: "absolute",
     top: MARGIN,
     left: MARGIN,
-    right: MARGIN,
+    width: mm(CONTENT_MM),
     height: HEADER_H,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     borderBottomColor: BORDER,
-    paddingBottom: 8,
+    paddingBottom: mm(3),
   },
-  brandRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  brandRow: { flexDirection: "row", alignItems: "center", gap: mm(3.5) },
   logoBox: {
-    width: 42,
-    height: 42,
-    borderRadius: 10,
+    width: mm(15),
+    height: mm(15),
+    borderRadius: mm(3.5),
     backgroundColor: GOLD,
     alignItems: "center",
     justifyContent: "center",
@@ -93,126 +101,127 @@ const s = StyleSheet.create({
   logoLetter: { color: GRAPHITE, fontSize: 24, fontWeight: 700 },
   brandName: { fontSize: 15, fontWeight: 700, letterSpacing: 0.3 },
   brandSub: { fontSize: 9, fontWeight: 600, color: GOLD },
-  brandSlogan: { fontSize: 7.5, color: MUTED, marginTop: 1 },
+  brandSlogan: { fontSize: 7.5, color: MUTED, marginTop: mm(0.4) },
   docTitle: { fontSize: 20, fontWeight: 700, textTransform: "uppercase", textAlign: "right", lineHeight: 1 },
-  docNumber: { fontSize: 10, fontWeight: 600, color: GOLD, textAlign: "right", marginTop: 5 },
-  metaRow: { flexDirection: "row", justifyContent: "flex-end", gap: 10, marginTop: 2 },
+  docNumber: { fontSize: 10, fontWeight: 600, color: GOLD, textAlign: "right", marginTop: mm(1.8) },
+  metaRow: { flexDirection: "row", justifyContent: "flex-end", gap: mm(3.5), marginTop: mm(0.8) },
   metaLabel: { color: MUTED },
-  metaValue: { fontWeight: 600, width: 62, textAlign: "right" },
+  metaValue: { fontWeight: 600, width: mm(22), textAlign: "right" },
 
-  /* Footer (fixed, repeats every page) */
+  /* Footer (fixed, repeats every page) — three fixed mm columns */
   footer: {
     position: "absolute",
     bottom: MARGIN,
     left: MARGIN,
-    right: MARGIN,
+    width: mm(CONTENT_MM),
     height: FOOTER_H,
-    borderTopWidth: 1,
+    borderTopWidth: 0.5,
     borderTopColor: BORDER,
-    paddingTop: 6,
+    paddingTop: mm(2),
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  footerCol: { flexBasis: "32%", fontSize: 7.5, color: MUTED },
-  footerColRight: { flexBasis: "32%", fontSize: 7.5, color: MUTED, textAlign: "right" },
-  footerStrong: { color: GRAPHITE, fontWeight: 700, marginBottom: 2 },
+  footerCol: { width: mm(58), fontSize: 7.5, color: MUTED },
+  footerColRight: { width: mm(58), fontSize: 7.5, color: MUTED, textAlign: "right" },
+  footerStrong: { color: GRAPHITE, fontWeight: 700, marginBottom: mm(0.7) },
   pageNo: {
     position: "absolute",
-    bottom: MARGIN - 10,
+    bottom: MARGIN - mm(3.5),
     left: MARGIN,
-    right: MARGIN,
+    width: mm(CONTENT_MM),
     textAlign: "center",
     fontSize: 7,
     color: MUTED,
   },
 
-  /* Parties — borderless, thin divider above, two 50% columns, generous space */
+  /* Parties — borderless, thin divider above, two fixed 88 mm columns */
   parties: {
     flexDirection: "row",
-    gap: 28,
-    borderTopWidth: 1,
+    gap: mm(10),
+    borderTopWidth: 0.5,
     borderTopColor: BORDER,
-    paddingTop: 14,
-    marginBottom: 18,
+    paddingTop: mm(5),
+    marginBottom: mm(6),
   },
-  partyCol: { flexBasis: "50%", flexGrow: 1 },
+  partyCol: { width: mm(88) },
   partyLabel: {
     fontSize: 7.5,
     fontWeight: 700,
     color: GOLD,
     textTransform: "uppercase",
     letterSpacing: 1,
-    marginBottom: 5,
+    marginBottom: mm(1.8),
   },
-  partyName: { fontSize: 12, fontWeight: 600, marginBottom: 4 },
-  partyLine: { fontSize: 8.5, color: MUTED, marginBottom: 1.5 },
+  partyName: { fontSize: 12, fontWeight: 600, marginBottom: mm(1.5) },
+  partyLine: { fontSize: 8.5, color: MUTED, marginBottom: mm(0.6) },
 
-  /* Info bar (single fixed-height row) */
+  /* Info bar (single fixed-height row = 14 mm) */
   infoBar: {
     flexDirection: "row",
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: BORDER,
-    borderRadius: 12,
+    borderRadius: mm(3),
     overflow: "hidden",
-    marginBottom: 12,
-    height: 40,
+    marginBottom: mm(6),
+    height: mm(14),
   },
   infoCell: {
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: 0,
     backgroundColor: LIGHT,
-    paddingHorizontal: 8,
+    paddingHorizontal: mm(3),
     justifyContent: "center",
-    borderRightWidth: 1,
+    borderRightWidth: 0.5,
     borderRightColor: BORDER,
   },
   infoLabel: { fontSize: 6.5, color: MUTED, textTransform: "uppercase", letterSpacing: 0.4 },
   infoValue: { fontSize: 8.5, fontWeight: 600 },
 
-  /* Table */
-  table: { borderWidth: 1, borderColor: BORDER, borderRadius: 12, overflow: "hidden" },
+  /* Items table — the only element with dynamic height */
+  table: { width: mm(CONTENT_MM), borderWidth: 0.5, borderColor: BORDER, borderRadius: mm(3), overflow: "hidden" },
   thead: { flexDirection: "row", backgroundColor: GRAPHITE },
-  th: { color: WHITE, fontSize: 8, fontWeight: 700, paddingVertical: 6, paddingHorizontal: 6 },
-  row: { flexDirection: "row", borderTopWidth: 1, borderTopColor: BORDER },
+  th: { color: WHITE, fontSize: 8, fontWeight: 700, paddingVertical: mm(2), paddingHorizontal: mm(2) },
+  row: { flexDirection: "row", borderTopWidth: 0.5, borderTopColor: BORDER },
   rowAlt: { backgroundColor: "#FCFCFC" },
-  td: { fontSize: 8.5, paddingVertical: 6, paddingHorizontal: 6 },
-  tdMuted: { fontSize: 8.5, color: MUTED, paddingVertical: 6, paddingHorizontal: 6 },
+  td: { fontSize: 8.5, paddingVertical: mm(2), paddingHorizontal: mm(2) },
+  tdMuted: { fontSize: 8.5, color: MUTED, paddingVertical: mm(2), paddingHorizontal: mm(2) },
 
-  /* Summary + payment (kept together, below table) */
-  summaryWrap: { flexDirection: "row", gap: 12, marginTop: 12 },
+  /* Summary + payment (kept together, below table) — fixed mm widths */
+  summaryWrap: { flexDirection: "row", gap: mm(6), marginTop: mm(6) },
   payCard: {
-    flex: 1,
-    borderWidth: 1,
+    width: mm(106),
+    borderWidth: 0.5,
     borderColor: GOLD,
-    borderRadius: 12,
+    borderRadius: mm(3),
     backgroundColor: "#FBF6EC",
-    padding: 10,
+    padding: mm(3.5),
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  payLabelHead: { fontSize: 7.5, fontWeight: 700, color: GOLD, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4 },
-  payRow: { flexDirection: "row", marginBottom: 2 },
-  payKey: { width: 46, color: MUTED, fontSize: 8 },
+  payLabelHead: { fontSize: 7.5, fontWeight: 700, color: GOLD, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: mm(1.5) },
+  payRow: { flexDirection: "row", marginBottom: mm(0.7) },
+  payKey: { width: mm(16), color: MUTED, fontSize: 8 },
   payVal: { fontSize: 8, fontWeight: 600 },
-  qr: { width: 92, height: 92 },
-  qrCaption: { fontSize: 6.5, color: MUTED, textAlign: "center", marginTop: 2 },
+  qr: { width: mm(26), height: mm(26) },
+  qrCaption: { fontSize: 6.5, color: MUTED, textAlign: "center", marginTop: mm(0.7) },
 
-  totalsCard: { flexBasis: 244, borderWidth: 1, borderColor: BORDER, borderRadius: 12, padding: 10 },
-  totalRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 3 },
+  totalsCard: { width: mm(74), borderWidth: 0.5, borderColor: BORDER, borderRadius: mm(3), padding: mm(3.5) },
+  totalRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: mm(1) },
   totalLabel: { color: MUTED, fontSize: 9 },
   grand: {
-    marginTop: 6,
+    marginTop: mm(2),
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: GOLD,
     color: WHITE,
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
+    borderRadius: mm(2),
+    paddingVertical: mm(2.5),
+    paddingHorizontal: mm(3),
   },
-  grandLabel: { color: WHITE, fontSize: 8, fontWeight: 700, textTransform: "uppercase", marginRight: 8 },
+  grandLabel: { color: WHITE, fontSize: 8, fontWeight: 700, textTransform: "uppercase", marginRight: mm(3) },
   grandValue: { color: WHITE, fontSize: 12, fontWeight: 700 },
-  notes: { marginTop: 12, backgroundColor: LIGHT, borderRadius: 10, padding: 10, fontSize: 8, color: MUTED },
+  notes: { marginTop: mm(6), backgroundColor: LIGHT, borderRadius: mm(2.5), padding: mm(3.5), fontSize: 8, color: MUTED },
 });
 
 /* Czech currency/date formatting (self-contained for the PDF renderer). */
