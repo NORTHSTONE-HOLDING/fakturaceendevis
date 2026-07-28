@@ -12,6 +12,11 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: "10mb",
     },
+    serverComponentsExternalPackages: ["@react-pdf/renderer"],
+    // Ensure the bundled Inter TTFs ship with the PDF route in serverless builds.
+    outputFileTracingIncludes: {
+      "/invoices/[id]/pdf": ["./public/fonts/**"],
+    },
   },
 };
 

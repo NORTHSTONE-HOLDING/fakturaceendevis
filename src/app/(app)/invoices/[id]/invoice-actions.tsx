@@ -31,7 +31,7 @@ export function InvoiceActions({
     <div className="flex flex-wrap items-center gap-2">
       <Button
         variant="outline"
-        onClick={() => window.open(`/invoices/${id}/print`, "_blank")}
+        onClick={() => window.open(`/invoices/${id}/pdf`, "_blank")}
       >
         <Printer className="h-4 w-4" /> PDF / Tisk
       </Button>
