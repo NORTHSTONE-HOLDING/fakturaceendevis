@@ -26,6 +26,8 @@ export type ProjectStage = Enums["project_stage"];
 export type DefectStatus = Enums["defect_status"];
 export type AdditionalWorkStatus = Enums["additional_work_status"];
 export type CustomerEntityType = Enums["customer_entity_type"];
+export type HandoverType = Enums["handover_type"];
+export type HandoverStatus = Enums["handover_status"];
 
 /* Row aliases */
 export type Profile = Tables["profiles"]["Row"];

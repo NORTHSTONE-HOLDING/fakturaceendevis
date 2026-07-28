@@ -4,7 +4,18 @@ import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
 import { nextStage } from "@/lib/projects";
-import type { DefectPriority, DefectStatus, ProjectStage } from "@/types/database";
+import type {
+  DefectPriority,
+  DefectStatus,
+  HandoverType,
+  ProjectStage,
+} from "@/types/database";
+
+function czk(n: number): string {
+  return (
+    new Intl.NumberFormat("cs-CZ", { maximumFractionDigits: 0 }).format(n) + " Kč"
+  );
+}
 
 export interface ActionResult {
   error?: string;
@@ -281,6 +292,164 @@ export async function addCostAction(
   });
   if (error) return { error: error.message };
   revalidatePath(`/projects/${projectId}`);
+  return {};
+}
+
+/** Create a handover protocol with an auto-compiled project summary snapshot. */
+export async function createHandoverAction(
+  projectId: string,
+  input: {
+    protocol_type: HandoverType;
+    scope: string | null;
+    completed_work: string | null;
+    equipment_delivered: string | null;
+    keys_handed: string | null;
+    meters: string | null;
+    responsible_person: string | null;
+    notes: string | null;
+  },
+): Promise<ActionResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: project } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("id", projectId)
+    .maybeSingle();
+  if (!project) return { error: "Projekt nenalezen." };
+
+  const [{ data: invoices }, { data: defects }, { data: aw }] = await Promise.all([
+    supabase
+      .from("invoices")
+      .select("total, status, is_advance")
+      .eq("project_id", projectId)
+      .is("deleted_at", null),
+    supabase.from("defects").select("status").eq("project_id", projectId),
+    supabase
+      .from("additional_works")
+      .select("amount, status")
+      .eq("project_id", projectId)
+      .is("deleted_at", null),
+  ]);
+
+  const inv = invoices ?? [];
+  const revenue = inv
+    .filter((i) => i.status === "paid")
+    .reduce((s, i) => s + Number(i.total), 0);
+  const outstanding = inv
+    .filter((i) => i.status === "sent" || i.status === "overdue")
+    .reduce((s, i) => s + Number(i.total), 0);
+  const advances = inv
+    .filter((i) => i.is_advance && i.status === "paid")
+    .reduce((s, i) => s + Number(i.total), 0);
+  const openDefects = (defects ?? []).filter(
+    (d) => d.status !== "completed" && d.status !== "rejected",
+  ).length;
+  const approvedAw = (aw ?? [])
+    .filter((a) => a.status === "approved")
+    .reduce((s, a) => s + Number(a.amount), 0);
+
+  const summary = [
+    { label: "Číslo projektu", value: project.number },
+    { label: "Rozpočet", value: czk(Number(project.budget_amount)) },
+    { label: "Uhrazené faktury", value: czk(revenue) },
+    { label: "Neuhrazeno", value: czk(outstanding) },
+    { label: "Uhrazené zálohy", value: czk(advances) },
+    { label: "Schválené vícepráce", value: czk(approvedAw) },
+    { label: "Počet faktur", value: String(inv.length) },
+    { label: "Otevřené vady", value: String(openDefects) },
+  ];
+
+  const number = await nextNumber(supabase, "HOV");
+  if (!number) return { error: "Nepodařilo se vygenerovat číslo protokolu." };
+
+  const { data, error } = await supabase
+    .from("handover_protocols")
+    .insert({
+      number,
+      project_id: projectId,
+      customer_id: project.customer_id,
+      address: project.address,
+      protocol_type: input.protocol_type,
+      responsible_person: input.responsible_person,
+      completed_work: input.completed_work,
+      equipment_delivered: input.equipment_delivered,
+      keys_handed: input.keys_handed,
+      meters: input.meters,
+      notes: input.notes,
+      summary,
+      created_by: user?.id ?? null,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) return { error: error?.message ?? "Chyba." };
+  revalidatePath(`/projects/${projectId}`);
+  return { id: data.id };
+}
+
+/**
+ * Sign a handover protocol. A signed *final* handover closes the project:
+ * status → completed, stage → warranty, and warranty timers are set.
+ */
+export async function signHandoverAction(
+  handoverId: string,
+  projectId: string,
+  input: { customerName: string; contractorName: string },
+): Promise<ActionResult> {
+  if (!input.customerName.trim() || !input.contractorName.trim()) {
+    return { error: "Vyplňte jméno objednatele i zhotovitele." };
+  }
+  const supabase = await createClient();
+  const now = new Date().toISOString();
+
+  const { data: handover } = await supabase
+    .from("handover_protocols")
+    .select("protocol_type")
+    .eq("id", handoverId)
+    .maybeSingle();
+  if (!handover) return { error: "Protokol nenalezen." };
+
+  const { error } = await supabase
+    .from("handover_protocols")
+    .update({
+      status: "signed",
+      customer_signature: input.customerName,
+      contractor_signature: input.contractorName,
+      customer_signed_at: now,
+      contractor_signed_at: now,
+    })
+    .eq("id", handoverId);
+  if (error) return { error: error.message };
+
+  // Final handover = legal project closure → completion + warranty timers.
+  if (handover.protocol_type === "final") {
+    const { data: project } = await supabase
+      .from("projects")
+      .select("warranty_months")
+      .eq("id", projectId)
+      .maybeSingle();
+    const months = project?.warranty_months ?? 24;
+    const start = new Date();
+    const end = new Date(start);
+    end.setMonth(end.getMonth() + months);
+    await supabase
+      .from("projects")
+      .update({
+        status: "completed",
+        stage: "warranty",
+        end_date: start.toISOString().slice(0, 10),
+        warranty_start_date: start.toISOString().slice(0, 10),
+        warranty_end_date: end.toISOString().slice(0, 10),
+      })
+      .eq("id", projectId);
+  }
+
+  revalidatePath(`/projects/${projectId}`);
+  revalidatePath("/projects");
   return {};
 }
 

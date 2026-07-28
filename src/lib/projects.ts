@@ -2,9 +2,27 @@ import type {
   AdditionalWorkStatus,
   DefectPriority,
   DefectStatus,
+  HandoverType,
   ProjectStage,
   ProjectStatus,
 } from "@/types/database";
+
+export const HANDOVER_TYPES: { value: HandoverType; label: string; title: string }[] = [
+  { value: "final", label: "Finální předání", title: "PŘEDÁVACÍ PROTOKOL" },
+  { value: "partial", label: "Dílčí předání", title: "DÍLČÍ PŘEDÁVACÍ PROTOKOL" },
+  { value: "internal", label: "Interní předání", title: "INTERNÍ PROTOKOL" },
+  { value: "subcontractor", label: "Předání od subdodavatele", title: "PROTOKOL SUBDODAVATELE" },
+  { value: "warranty", label: "Záruční přejímka", title: "ZÁRUČNÍ PROTOKOL" },
+  { value: "acceptance", label: "Akceptační protokol", title: "AKCEPTAČNÍ PROTOKOL" },
+];
+
+export const HANDOVER_TYPE_LABELS: Record<HandoverType, string> = Object.fromEntries(
+  HANDOVER_TYPES.map((t) => [t.value, t.label]),
+) as Record<HandoverType, string>;
+
+export const HANDOVER_TITLES: Record<HandoverType, string> = Object.fromEntries(
+  HANDOVER_TYPES.map((t) => [t.value, t.title]),
+) as Record<HandoverType, string>;
 
 /** Ordered project lifecycle pipeline (Lead → … → Archive). */
 export const PROJECT_STAGES: { value: ProjectStage; label: string }[] = [

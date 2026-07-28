@@ -529,10 +529,12 @@ export type Database = {
           address: string | null
           completed_work: string | null
           contractor_signature: string | null
+          contractor_signed_at: string | null
           created_at: string
           created_by: string | null
           customer_id: string | null
           customer_signature: string | null
+          customer_signed_at: string | null
           equipment_delivered: string | null
           id: string
           keys_handed: string | null
@@ -541,16 +543,22 @@ export type Database = {
           number: string
           project_id: string
           protocol_date: string
+          protocol_type: Database["public"]["Enums"]["handover_type"]
           responsible_person: string | null
+          status: Database["public"]["Enums"]["handover_status"]
+          summary: Json | null
+          updated_at: string
         }
         Insert: {
           address?: string | null
           completed_work?: string | null
           contractor_signature?: string | null
+          contractor_signed_at?: string | null
           created_at?: string
           created_by?: string | null
           customer_id?: string | null
           customer_signature?: string | null
+          customer_signed_at?: string | null
           equipment_delivered?: string | null
           id?: string
           keys_handed?: string | null
@@ -559,16 +567,22 @@ export type Database = {
           number: string
           project_id: string
           protocol_date?: string
+          protocol_type?: Database["public"]["Enums"]["handover_type"]
           responsible_person?: string | null
+          status?: Database["public"]["Enums"]["handover_status"]
+          summary?: Json | null
+          updated_at?: string
         }
         Update: {
           address?: string | null
           completed_work?: string | null
           contractor_signature?: string | null
+          contractor_signed_at?: string | null
           created_at?: string
           created_by?: string | null
           customer_id?: string | null
           customer_signature?: string | null
+          customer_signed_at?: string | null
           equipment_delivered?: string | null
           id?: string
           keys_handed?: string | null
@@ -577,7 +591,11 @@ export type Database = {
           number?: string
           project_id?: string
           protocol_date?: string
+          protocol_type?: Database["public"]["Enums"]["handover_type"]
           responsible_person?: string | null
+          status?: Database["public"]["Enums"]["handover_status"]
+          summary?: Json | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -1029,6 +1047,9 @@ export type Database = {
           start_date: string
           status: Database["public"]["Enums"]["project_status"]
           updated_at: string
+          warranty_end_date: string | null
+          warranty_months: number
+          warranty_start_date: string | null
         }
         Insert: {
           address?: string | null
@@ -1049,6 +1070,9 @@ export type Database = {
           start_date?: string
           status?: Database["public"]["Enums"]["project_status"]
           updated_at?: string
+          warranty_end_date?: string | null
+          warranty_months?: number
+          warranty_start_date?: string | null
         }
         Update: {
           address?: string | null
@@ -1069,6 +1093,9 @@ export type Database = {
           start_date?: string
           status?: Database["public"]["Enums"]["project_status"]
           updated_at?: string
+          warranty_end_date?: string | null
+          warranty_months?: number
+          warranty_start_date?: string | null
         }
         Relationships: [
           {
@@ -1278,6 +1305,14 @@ export type Database = {
       defect_priority: "low" | "medium" | "high" | "critical"
       defect_status: "open" | "in_progress" | "completed" | "rejected"
       document_type: "INV" | "ADV" | "QTN" | "ORD" | "DLV" | "PRJ" | "HOV"
+      handover_status: "draft" | "signed" | "archived"
+      handover_type:
+        | "partial"
+        | "final"
+        | "internal"
+        | "subcontractor"
+        | "warranty"
+        | "acceptance"
       invoice_status: "draft" | "sent" | "paid" | "overdue" | "cancelled"
       product_status: "active" | "inactive" | "archived"
       project_stage:
@@ -1463,6 +1498,15 @@ export const Constants = {
       defect_priority: ["low", "medium", "high", "critical"],
       defect_status: ["open", "in_progress", "completed", "rejected"],
       document_type: ["INV", "ADV", "QTN", "ORD", "DLV", "PRJ", "HOV"],
+      handover_status: ["draft", "signed", "archived"],
+      handover_type: [
+        "partial",
+        "final",
+        "internal",
+        "subcontractor",
+        "warranty",
+        "acceptance",
+      ],
       invoice_status: ["draft", "sent", "paid", "overdue", "cancelled"],
       product_status: ["active", "inactive", "archived"],
       project_stage: [

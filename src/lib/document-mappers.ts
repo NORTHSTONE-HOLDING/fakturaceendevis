@@ -1,6 +1,8 @@
 import { buildSpdString, qrDataUri } from "@/lib/payment";
+import { HANDOVER_TITLES } from "@/lib/projects";
 import type { DocumentData } from "@/lib/documents";
 import type { InvoiceDetail } from "@/services/invoices";
+import type { HandoverDetail } from "@/services/handover";
 
 const PAYMENT_METHOD = "Bankovní převod";
 
@@ -72,5 +74,59 @@ export async function invoiceToDocument(
       qr,
     },
     notes: invoice.notes,
+  };
+}
+
+/** Maps a handover protocol (+ relations) into the unified DocumentData shape. */
+export function handoverToDocument(detail: HandoverDetail): DocumentData {
+  const { handover, customer, company } = detail;
+  const summary = Array.isArray(handover.summary)
+    ? (handover.summary as { label: string; value: string }[])
+    : [];
+
+  return {
+    type: "acceptance_protocol",
+    titleOverride: HANDOVER_TITLES[handover.protocol_type],
+    logoUrl: company?.logo_url ?? null,
+    number: handover.number,
+    issueDate: handover.protocol_date,
+    currency: "CZK",
+    supplier: {
+      name: company?.name ?? "ENDEVIS s.r.o.",
+      address: company?.address ?? null,
+      ico: company?.ico ?? null,
+      dic: company?.dic ?? null,
+      email: company?.email ?? null,
+      phone: company?.phone ?? null,
+    },
+    customer: customer
+      ? {
+          name: customer.company,
+          address: handover.address ?? customer.address,
+          city: customer.city,
+          zip: customer.zip,
+          ico: customer.ico,
+          dic: customer.dic,
+          email: customer.email,
+          phone: customer.phone,
+        }
+      : null,
+    items: [],
+    subtotal: 0,
+    vatTotal: 0,
+    total: 0,
+    protocol: {
+      responsiblePerson: handover.responsible_person,
+      completedWork: handover.completed_work,
+      equipmentDelivered: handover.equipment_delivered,
+      keysHanded: handover.keys_handed,
+      meters: handover.meters,
+      summary,
+      customerName: handover.customer_signature,
+      contractorName: handover.contractor_signature,
+      signedCustomerAt: handover.customer_signed_at,
+      signedContractorAt: handover.contractor_signed_at,
+    },
+    notes: handover.notes,
   };
 }

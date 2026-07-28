@@ -10,7 +10,12 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 
-import { DOCUMENT_DEFS, type DocumentData, type DocumentParty } from "@/lib/documents";
+import {
+  DOCUMENT_DEFS,
+  type DocumentData,
+  type DocumentParty,
+  type DocumentProtocol,
+} from "@/lib/documents";
 
 /* ────────────────────────────────────────────────────────────────────────
  * Fonts — bundled static Inter TTFs (public/fonts). Registered once.
@@ -225,6 +230,54 @@ const s = StyleSheet.create({
   grandLabel: { color: WHITE, fontSize: 8, fontWeight: 700, textTransform: "uppercase", marginRight: mm(3) },
   grandValue: { color: WHITE, fontSize: 12, fontWeight: 700 },
   notes: { marginTop: mm(6), backgroundColor: LIGHT, borderRadius: mm(2.5), padding: mm(3.5), fontSize: 8, color: MUTED },
+
+  /* Handover protocol body */
+  section: { marginTop: mm(6) },
+  sectionTitle: {
+    fontSize: 8,
+    fontWeight: 700,
+    color: GOLD,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: mm(2),
+  },
+  summaryGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    borderWidth: 0.5,
+    borderColor: BORDER,
+    borderRadius: mm(3),
+    overflow: "hidden",
+  },
+  summaryCell: {
+    width: mm(CONTENT_MM / 2),
+    paddingVertical: mm(2.5),
+    paddingHorizontal: mm(3.5),
+    borderBottomWidth: 0.5,
+    borderBottomColor: BORDER,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  summaryKey: { color: MUTED, fontSize: 8.5 },
+  summaryVal: { fontWeight: 600, fontSize: 8.5 },
+  block: {
+    borderWidth: 0.5,
+    borderColor: BORDER,
+    borderRadius: mm(3),
+    padding: mm(3.5),
+    fontSize: 8.5,
+  },
+  signRow: { flexDirection: "row", gap: mm(6), marginTop: mm(10) },
+  signBox: { width: mm(94) },
+  signLine: {
+    borderTopWidth: 0.75,
+    borderTopColor: GRAPHITE,
+    marginTop: mm(12),
+    paddingTop: mm(1.5),
+  },
+  signRole: { fontSize: 8, fontWeight: 700 },
+  signName: { fontSize: 8.5, marginTop: mm(0.5) },
+  signMeta: { fontSize: 7, color: MUTED, marginTop: mm(0.5) },
 });
 
 /* Czech currency/date formatting (self-contained for the PDF renderer). */
@@ -268,7 +321,7 @@ function Header({ data }: { data: DocumentData }) {
         )}
       </View>
       <View>
-        <Text style={s.docTitle}>{def.title}</Text>
+        <Text style={s.docTitle}>{data.titleOverride ?? def.title}</Text>
         <Text style={s.docNumber}>{data.number}</Text>
         <View style={s.metaRow}>
           <Text style={s.metaLabel}>Vystaveno</Text>
@@ -420,6 +473,95 @@ function TotalsCard({ data }: { data: DocumentData }) {
   );
 }
 
+function ProtocolBody({
+  protocol,
+  notes,
+}: {
+  protocol: DocumentProtocol;
+  notes?: string | null;
+}) {
+  return (
+    <View>
+      {protocol.summary.length > 0 && (
+        <View style={s.section}>
+          <Text style={s.sectionTitle}>Souhrn projektu</Text>
+          <View style={s.summaryGrid}>
+            {protocol.summary.map((r, i) => (
+              <View key={i} style={s.summaryCell}>
+                <Text style={s.summaryKey}>{r.label}</Text>
+                <Text style={s.summaryVal}>{r.value}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
+
+      {protocol.scope ? (
+        <ProtocolText title="Rozsah předání" text={protocol.scope} />
+      ) : null}
+      {protocol.completedWork ? (
+        <ProtocolText title="Předané / dokončené práce" text={protocol.completedWork} />
+      ) : null}
+      {protocol.equipmentDelivered ? (
+        <ProtocolText title="Předané zařízení" text={protocol.equipmentDelivered} />
+      ) : null}
+      {protocol.meters ? (
+        <ProtocolText title="Odečty měřidel" text={protocol.meters} />
+      ) : null}
+      {protocol.keysHanded ? (
+        <ProtocolText title="Předané klíče" text={protocol.keysHanded} />
+      ) : null}
+      {notes ? <ProtocolText title="Poznámky" text={notes} /> : null}
+
+      <View style={s.signRow} wrap={false}>
+        <SignatureBox
+          role="Zhotovitel"
+          name={protocol.contractorName}
+          signedAt={protocol.signedContractorAt}
+        />
+        <SignatureBox
+          role="Objednatel"
+          name={protocol.customerName}
+          signedAt={protocol.signedCustomerAt}
+        />
+      </View>
+    </View>
+  );
+}
+
+function ProtocolText({ title, text }: { title: string; text: string }) {
+  return (
+    <View style={s.section} wrap={false}>
+      <Text style={s.sectionTitle}>{title}</Text>
+      <View style={s.block}>
+        <Text>{text}</Text>
+      </View>
+    </View>
+  );
+}
+
+function SignatureBox({
+  role,
+  name,
+  signedAt,
+}: {
+  role: string;
+  name?: string | null;
+  signedAt?: string | null;
+}) {
+  return (
+    <View style={s.signBox}>
+      <View style={s.signLine}>
+        <Text style={s.signRole}>{role}</Text>
+        <Text style={s.signName}>{name || "……………………………"}</Text>
+        <Text style={s.signMeta}>
+          {signedAt ? `Podepsáno ${czDate(signedAt)}` : "Podpis / datum"}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 function Footer({ data }: { data: DocumentData }) {
   const sup = data.supplier;
   return (
@@ -468,20 +610,26 @@ export function DocumentPdf({ data }: { data: DocumentData }) {
         </View>
         <InfoBar data={data} />
 
-        {/* Flexible area: only the items table grows / paginates */}
-        <ItemsTable data={data} />
+        {data.protocol ? (
+          <ProtocolBody protocol={data.protocol} notes={data.notes} />
+        ) : (
+          <>
+            {/* Flexible area: only the items table grows / paginates */}
+            <ItemsTable data={data} />
 
-        {/* Summary block: stays together, moves to next page if needed */}
-        <View style={s.summaryWrap} wrap={false}>
-          {def.showPayment ? <PaymentCard data={data} /> : <View style={{ flex: 1 }} />}
-          <TotalsCard data={data} />
-        </View>
+            {/* Summary block: stays together, moves to next page if needed */}
+            <View style={s.summaryWrap} wrap={false}>
+              {def.showPayment ? <PaymentCard data={data} /> : <View style={{ flex: 1 }} />}
+              <TotalsCard data={data} />
+            </View>
 
-        {data.notes ? (
-          <View style={s.notes} wrap={false}>
-            <Text>{data.notes}</Text>
-          </View>
-        ) : null}
+            {data.notes ? (
+              <View style={s.notes} wrap={false}>
+                <Text>{data.notes}</Text>
+              </View>
+            ) : null}
+          </>
+        )}
       </Page>
     </Document>
   );

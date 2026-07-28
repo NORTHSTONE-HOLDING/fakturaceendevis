@@ -18,6 +18,8 @@ import {
   ArrowRight,
   Check,
   X,
+  FileCheck2,
+  Printer,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -29,6 +31,8 @@ import {
   decideAdditionalWorkAction,
   advanceStageAction,
   setDefectStatusAction,
+  createHandoverAction,
+  signHandoverAction,
 } from "../actions";
 import type { ProjectDetail } from "@/services/projects";
 import { Badge } from "@/components/ui/badge";
@@ -54,16 +58,18 @@ import {
   DEFECT_PRIORITY_LABELS,
   DEFECT_PRIORITY_VARIANT,
   DEFECT_STATUS_LABELS,
+  HANDOVER_TYPES,
+  HANDOVER_TYPE_LABELS,
   PROJECT_STAGES,
   nextStage,
 } from "@/lib/projects";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import type { DefectPriority, DefectStatus } from "@/types/database";
+import type { DefectPriority, DefectStatus, HandoverType } from "@/types/database";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
 export function ProjectTabs({ detail }: { detail: ProjectDetail }) {
-  const { project, financials, diary, defects, costs, invoices, additionalWorks } =
+  const { project, financials, diary, defects, costs, invoices, additionalWorks, handovers } =
     detail;
   const openDefects = defects.filter((d) => d.status !== "completed" && d.status !== "rejected").length;
   const pendingAw = additionalWorks.filter((a) => a.status === "proposed").length;
@@ -77,6 +83,7 @@ export function ProjectTabs({ detail }: { detail: ProjectDetail }) {
         <TabsTrigger value="additional">Vícepráce ({pendingAw})</TabsTrigger>
         <TabsTrigger value="costs">Náklady</TabsTrigger>
         <TabsTrigger value="invoices">Faktury ({invoices.length})</TabsTrigger>
+        <TabsTrigger value="handover">Protokol ({handovers.length})</TabsTrigger>
       </TabsList>
 
       {/* ── Overview / cost control ─────────────────────────────── */}
@@ -253,6 +260,20 @@ export function ProjectTabs({ detail }: { detail: ProjectDetail }) {
               ))}
             </CardContent>
           </Card>
+        )}
+      </TabsContent>
+
+      {/* ── Handover protocols ──────────────────────────────────── */}
+      <TabsContent value="handover" className="space-y-4">
+        <HandoverForm projectId={project.id} />
+        {handovers.length === 0 ? (
+          <EmptyState icon={FileCheck2} text="Zatím žádné předávací protokoly." />
+        ) : (
+          <div className="space-y-2">
+            {handovers.map((h) => (
+              <HandoverRow key={h.id} handover={h} projectId={project.id} />
+            ))}
+          </div>
         )}
       </TabsContent>
 
@@ -773,6 +794,165 @@ function AdditionalWorkRow({
             </>
           )}
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function HandoverForm({ projectId }: { projectId: string }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [type, setType] = useState<HandoverType>("final");
+  const [responsible, setResponsible] = useState("");
+  const [completed, setCompleted] = useState("");
+  const [meters, setMeters] = useState("");
+
+  function submit() {
+    startTransition(async () => {
+      const r = await createHandoverAction(projectId, {
+        protocol_type: type,
+        scope: null,
+        completed_work: completed || null,
+        equipment_delivered: null,
+        keys_handed: null,
+        meters: meters || null,
+        responsible_person: responsible || null,
+        notes: null,
+      });
+      if (r.error) {
+        toast.error(r.error);
+        return;
+      }
+      toast.success("Protokol vytvořen (souhrn projektu doplněn automaticky)");
+      setCompleted("");
+      setMeters("");
+      setResponsible("");
+      router.refresh();
+    });
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Nový předávací protokol</CardTitle>
+      </CardHeader>
+      <CardContent className="grid gap-3 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <Label className="text-xs">Typ protokolu</Label>
+          <Select value={type} onValueChange={(v) => setType(v as HandoverType)}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {HANDOVER_TYPES.map((t) => (
+                <SelectItem key={t.value} value={t.value}>
+                  {t.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs">Odpovědná osoba</Label>
+          <Input value={responsible} onChange={(e) => setResponsible(e.target.value)} />
+        </div>
+        <div className="space-y-1.5 sm:col-span-2">
+          <Label className="text-xs">Předané / dokončené práce</Label>
+          <Textarea rows={2} value={completed} onChange={(e) => setCompleted(e.target.value)} />
+        </div>
+        <div className="space-y-1.5 sm:col-span-2">
+          <Label className="text-xs">Odečty měřidel</Label>
+          <Input value={meters} onChange={(e) => setMeters(e.target.value)} placeholder="Elektroměr 12345, vodoměr 678" />
+        </div>
+        <div className="sm:col-span-2">
+          <Button onClick={submit} disabled={pending}>
+            {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+            Vytvořit protokol
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function HandoverRow({
+  handover,
+  projectId,
+}: {
+  handover: ProjectDetail["handovers"][number];
+  projectId: string;
+}) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [customerName, setCustomerName] = useState("");
+  const [contractorName, setContractorName] = useState("");
+  const signed = handover.status === "signed";
+
+  function sign() {
+    startTransition(async () => {
+      const r = await signHandoverAction(handover.id, projectId, {
+        customerName,
+        contractorName,
+      });
+      if (r.error) {
+        toast.error(r.error);
+        return;
+      }
+      toast.success(
+        handover.protocol_type === "final"
+          ? "Protokol podepsán — projekt dokončen, spuštěna záruka"
+          : "Protokol podepsán",
+      );
+      router.refresh();
+    });
+  }
+
+  return (
+    <Card>
+      <CardContent className="space-y-3 p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <FileCheck2 className="h-4 w-4 text-primary" />
+            <span className="font-mono text-sm">{handover.number}</span>
+            <Badge variant="outline">{HANDOVER_TYPE_LABELS[handover.protocol_type]}</Badge>
+            <Badge variant={signed ? "success" : "secondary"}>
+              {signed ? "Podepsáno" : "Koncept"}
+            </Badge>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.open(`/handover/${handover.id}/pdf`, "_blank")}
+          >
+            <Printer className="h-4 w-4" /> PDF
+          </Button>
+        </div>
+
+        {!signed && (
+          <div className="grid gap-2 border-t pt-3 sm:grid-cols-3">
+            <Input
+              placeholder="Zhotovitel (jméno)"
+              value={contractorName}
+              onChange={(e) => setContractorName(e.target.value)}
+            />
+            <Input
+              placeholder="Objednatel (jméno)"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+            />
+            <Button onClick={sign} disabled={pending}>
+              {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+              Podepsat {handover.protocol_type === "final" ? "a dokončit" : ""}
+            </Button>
+          </div>
+        )}
+        {signed && (
+          <p className="border-t pt-3 text-xs text-muted-foreground">
+            Podepsali: {handover.contractor_signature} (zhotovitel),{" "}
+            {handover.customer_signature} (objednatel) ·{" "}
+            {handover.customer_signed_at ? formatDate(handover.customer_signed_at) : ""}
+          </p>
+        )}
       </CardContent>
     </Card>
   );

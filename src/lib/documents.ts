@@ -122,8 +122,27 @@ export interface DocumentPayment {
   qr?: string | null;
 }
 
+/** Handover-protocol body (rendered by the same unified engine as invoices). */
+export interface DocumentProtocol {
+  responsiblePerson?: string | null;
+  scope?: string | null;
+  completedWork?: string | null;
+  equipmentDelivered?: string | null;
+  keysHanded?: string | null;
+  meters?: string | null;
+  summary: { label: string; value: string }[];
+  customerName?: string | null;
+  contractorName?: string | null;
+  signedCustomerAt?: string | null;
+  signedContractorAt?: string | null;
+}
+
 export interface DocumentData {
   type: DocumentDefType;
+  /** Overrides the registry title (e.g. specific handover type). */
+  titleOverride?: string | null;
+  /** When set, the engine renders a handover protocol instead of an invoice body. */
+  protocol?: DocumentProtocol | null;
   /** Uploaded company logo (from Company Settings). Falls back to the ENDEVIS mark. */
   logoUrl?: string | null;
   number: string;
