@@ -1,7 +1,8 @@
-import { Building2, CreditCard, Bot, Mail, Image as ImageIcon } from "lucide-react";
+import { Building2, CreditCard, Bot, Mail, Image as ImageIcon, TrendingUp } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { LogoUpload } from "./logo-upload";
+import { ExchangeRates } from "./exchange-rates";
 import {
   Card,
   CardContent,
@@ -100,6 +101,20 @@ export default async function SettingsPage() {
                 <Badge variant="outline">ADV-YYYY-000001</Badge>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-primary" /> Kurzy ČNB
+            </CardTitle>
+            <CardDescription>
+              Denní kurzovní lístek České národní banky (multi-měnové doklady)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ExchangeRates />
           </CardContent>
         </Card>
 

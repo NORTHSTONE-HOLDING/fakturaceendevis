@@ -701,6 +701,8 @@ export type Database = {
           total: number
           updated_at: string
           variable_symbol: string | null
+          vat_mode: Database["public"]["Enums"]["vat_mode"]
+          vat_note: string | null
           vat_total: number
         }
         Insert: {
@@ -725,6 +727,8 @@ export type Database = {
           total?: number
           updated_at?: string
           variable_symbol?: string | null
+          vat_mode?: Database["public"]["Enums"]["vat_mode"]
+          vat_note?: string | null
           vat_total?: number
         }
         Update: {
@@ -749,6 +753,8 @@ export type Database = {
           total?: number
           updated_at?: string
           variable_symbol?: string | null
+          vat_mode?: Database["public"]["Enums"]["vat_mode"]
+          vat_note?: string | null
           vat_total?: number
         }
         Relationships: [
@@ -1346,6 +1352,7 @@ export type Database = {
         | "rejected"
         | "expired"
         | "converted"
+      vat_mode: "standard" | "reverse_charge" | "oss" | "eu_vat" | "export"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1537,6 +1544,7 @@ export const Constants = {
         "expired",
         "converted",
       ],
+      vat_mode: ["standard", "reverse_charge", "oss", "eu_vat", "export"],
     },
   },
 } as const

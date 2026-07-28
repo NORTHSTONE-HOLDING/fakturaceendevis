@@ -159,5 +159,7 @@ export interface DocumentData {
   shipping?: number;
   total: number;
   payment?: DocumentPayment | null;
+  /** Statutory VAT text (reverse charge / OSS / EU / export) shown prominently. */
+  statutoryNote?: string | null;
   notes?: string | null;
 }

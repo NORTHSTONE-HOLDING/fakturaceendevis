@@ -73,6 +73,7 @@ export async function invoiceToDocument(
       dueDate: invoice.due_date,
       qr,
     },
+    statutoryNote: invoice.vat_note,
     notes: invoice.notes,
   };
 }

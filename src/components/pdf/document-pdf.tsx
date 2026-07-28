@@ -230,6 +230,17 @@ const s = StyleSheet.create({
   grandLabel: { color: WHITE, fontSize: 8, fontWeight: 700, textTransform: "uppercase", marginRight: mm(3) },
   grandValue: { color: WHITE, fontSize: 12, fontWeight: 700 },
   notes: { marginTop: mm(6), backgroundColor: LIGHT, borderRadius: mm(2.5), padding: mm(3.5), fontSize: 8, color: MUTED },
+  statutory: {
+    marginTop: mm(6),
+    borderWidth: 0.75,
+    borderColor: GOLD,
+    borderRadius: mm(2.5),
+    backgroundColor: "#FBF6EC",
+    padding: mm(3.5),
+    fontSize: 8.5,
+    fontWeight: 600,
+    color: GRAPHITE,
+  },
 
   /* Handover protocol body */
   section: { marginTop: mm(6) },
@@ -622,6 +633,12 @@ export function DocumentPdf({ data }: { data: DocumentData }) {
               {def.showPayment ? <PaymentCard data={data} /> : <View style={{ flex: 1 }} />}
               <TotalsCard data={data} />
             </View>
+
+            {data.statutoryNote ? (
+              <View style={s.statutory} wrap={false}>
+                <Text>{data.statutoryNote}</Text>
+              </View>
+            ) : null}
 
             {data.notes ? (
               <View style={s.notes} wrap={false}>

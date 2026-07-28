@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/utils";
 import { VAT_RATES } from "@/lib/constants";
+import { VAT_MODES, isZeroRated } from "@/lib/vat";
+import type { VatMode } from "@/types/database";
 
 interface Customer {
   id: string;
@@ -75,7 +77,9 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
   const [taxDate, setTaxDate] = useState(today());
   const [dueDate, setDueDate] = useState(today(14));
   const [notes, setNotes] = useState("");
+  const [vatMode, setVatMode] = useState<VatMode>("standard");
   const [items, setItems] = useState<LineItem[]>([newLine()]);
+  const zeroRated = isZeroRated(vatMode);
 
   function updateItem(key: string, patch: Partial<LineItem>) {
     setItems((prev) =>
@@ -113,10 +117,12 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
     (s, i) => s + i.quantity * i.unit_price,
     0,
   );
-  const vatTotal = items.reduce(
-    (s, i) => s + i.quantity * i.unit_price * (i.vat_rate / 100),
-    0,
-  );
+  const vatTotal = zeroRated
+    ? 0
+    : items.reduce(
+        (s, i) => s + i.quantity * i.unit_price * (i.vat_rate / 100),
+        0,
+      );
   const total = subtotal + vatTotal;
 
   function submit() {
@@ -127,6 +133,7 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
         due_date: dueDate,
         tax_date: taxDate,
         notes: notes.trim() || null,
+        vat_mode: vatMode,
         items: items.map((i) => ({
           product_id: i.product_id,
           description: i.description,
@@ -193,6 +200,27 @@ export function InvoiceForm({ customers }: { customers: Customer[] }) {
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
             />
+          </div>
+          <div className="space-y-2 sm:col-span-2">
+            <Label>Režim DPH</Label>
+            <Select value={vatMode} onValueChange={(v) => setVatMode(v as VatMode)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {VAT_MODES.map((m) => (
+                  <SelectItem key={m.value} value={m.value}>
+                    {m.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {zeroRated && (
+              <p className="rounded-md bg-accent/60 px-3 py-2 text-xs text-accent-foreground">
+                DPH bude nastaveno na 0 % a na doklad se doplní zákonná věta
+                (např. „Daň odvede zákazník“).
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>

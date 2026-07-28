@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
-import type { InvoiceStatus } from "@/types/database";
+import { isZeroRated, statutoryVatNote } from "@/lib/vat";
+import type { InvoiceStatus, VatMode } from "@/types/database";
 
 export interface InvoiceItemInput {
   product_id: string | null;
@@ -20,6 +21,7 @@ export interface CreateInvoiceInput {
   due_date: string;
   tax_date: string;
   notes: string | null;
+  vat_mode: VatMode;
   items: InvoiceItemInput[];
 }
 
@@ -60,15 +62,23 @@ export async function createInvoiceAction(
     .limit(1)
     .maybeSingle();
 
+  // Special VAT modes (reverse charge / OSS / EU / export) force 0% VAT.
+  const zeroRated = isZeroRated(input.vat_mode);
   const computed = items.map((i, idx) => {
     const line = round2(i.quantity * i.unit_price);
-    return { ...i, line_total: line, position: idx };
+    return {
+      ...i,
+      vat_rate: zeroRated ? 0 : i.vat_rate,
+      line_total: line,
+      position: idx,
+    };
   });
   const subtotal = round2(computed.reduce((s, i) => s + i.line_total, 0));
-  const vatTotal = round2(
-    computed.reduce((s, i) => s + i.line_total * (i.vat_rate / 100), 0),
-  );
+  const vatTotal = zeroRated
+    ? 0
+    : round2(computed.reduce((s, i) => s + i.line_total * (i.vat_rate / 100), 0));
   const total = round2(subtotal + vatTotal);
+  const vatNote = statutoryVatNote(input.vat_mode);
 
   const { data: invoice, error: invErr } = await supabase
     .from("invoices")
@@ -83,6 +93,8 @@ export async function createInvoiceAction(
       vat_total: vatTotal,
       total,
       notes: input.notes,
+      vat_mode: input.vat_mode,
+      vat_note: vatNote,
       iban: company?.iban ?? null,
       swift: company?.swift ?? null,
       variable_symbol: number.replace(/\D/g, "").slice(-10),
