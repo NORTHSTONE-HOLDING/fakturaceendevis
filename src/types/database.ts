@@ -25,6 +25,7 @@ export type DefectPriority = Enums["defect_priority"];
 export type ProjectStage = Enums["project_stage"];
 export type DefectStatus = Enums["defect_status"];
 export type AdditionalWorkStatus = Enums["additional_work_status"];
+export type CustomerEntityType = Enums["customer_entity_type"];
 
 /* Row aliases */
 export type Profile = Tables["profiles"]["Row"];
@@ -41,3 +42,4 @@ export type Defect = Tables["defects"]["Row"];
 export type HandoverProtocol = Tables["handover_protocols"]["Row"];
 export type ProjectCost = Tables["project_costs"]["Row"];
 export type AdditionalWork = Tables["additional_works"]["Row"];
+export type CustomerContact = Tables["customer_contacts"]["Row"];

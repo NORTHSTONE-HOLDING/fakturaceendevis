@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Building2, Mail, Phone } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
@@ -63,7 +64,12 @@ export default async function CustomersPage() {
                           <Building2 className="h-4 w-4" />
                         </div>
                         <div>
-                          <p className="font-medium">{c.company}</p>
+                          <Link
+                            href={`/customers/${c.id}`}
+                            className="font-medium hover:text-primary hover:underline"
+                          >
+                            {c.company}
+                          </Link>
                           {c.contact_person && (
                             <p className="text-xs text-muted-foreground">
                               {c.contact_person}

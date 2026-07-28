@@ -265,9 +265,82 @@ export type Database = {
           },
         ]
       }
+      customer_contacts: {
+        Row: {
+          birthday: string | null
+          created_at: string
+          created_by: string | null
+          customer_id: string
+          deleted_at: string | null
+          email: string | null
+          first_name: string | null
+          id: string
+          is_primary: boolean
+          last_name: string
+          mobile: string | null
+          notes: string | null
+          phone: string | null
+          position: string | null
+          preferred_contact: string | null
+          updated_at: string
+        }
+        Insert: {
+          birthday?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id: string
+          deleted_at?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          is_primary?: boolean
+          last_name: string
+          mobile?: string | null
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          preferred_contact?: string | null
+          updated_at?: string
+        }
+        Update: {
+          birthday?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string
+          deleted_at?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          is_primary?: boolean
+          last_name?: string
+          mobile?: string | null
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          preferred_contact?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_contacts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_contacts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
+          assigned_to: string | null
           city: string | null
           company: string
           contact_person: string | null
@@ -277,10 +350,14 @@ export type Database = {
           deleted_at: string | null
           dic: string | null
           email: string | null
+          entity_type: Database["public"]["Enums"]["customer_entity_type"]
+          iban: string | null
           ico: string | null
           id: string
           notes: string | null
+          payment_terms_days: number
           phone: string | null
+          swift: string | null
           tags: string[]
           updated_at: string
           website: string | null
@@ -288,6 +365,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          assigned_to?: string | null
           city?: string | null
           company: string
           contact_person?: string | null
@@ -297,10 +375,14 @@ export type Database = {
           deleted_at?: string | null
           dic?: string | null
           email?: string | null
+          entity_type?: Database["public"]["Enums"]["customer_entity_type"]
+          iban?: string | null
           ico?: string | null
           id?: string
           notes?: string | null
+          payment_terms_days?: number
           phone?: string | null
+          swift?: string | null
           tags?: string[]
           updated_at?: string
           website?: string | null
@@ -308,6 +390,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          assigned_to?: string | null
           city?: string | null
           company?: string
           contact_person?: string | null
@@ -317,16 +400,27 @@ export type Database = {
           deleted_at?: string | null
           dic?: string | null
           email?: string | null
+          entity_type?: Database["public"]["Enums"]["customer_entity_type"]
+          iban?: string | null
           ico?: string | null
           id?: string
           notes?: string | null
+          payment_terms_days?: number
           phone?: string | null
+          swift?: string | null
           tags?: string[]
           updated_at?: string
           website?: string | null
           zip?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "customers_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "customers_created_by_fkey"
             columns: ["created_by"]
@@ -1171,6 +1265,16 @@ export type Database = {
         | "accountant"
         | "warehouse"
         | "sales"
+      customer_entity_type:
+        | "firma"
+        | "osvc"
+        | "soukroma_osoba"
+        | "dodavatel"
+        | "partner"
+        | "investor"
+        | "developer"
+        | "obec_mesto"
+        | "organizace"
       defect_priority: "low" | "medium" | "high" | "critical"
       defect_status: "open" | "in_progress" | "completed" | "rejected"
       document_type: "INV" | "ADV" | "QTN" | "ORD" | "DLV" | "PRJ" | "HOV"
@@ -1344,6 +1448,17 @@ export const Constants = {
         "accountant",
         "warehouse",
         "sales",
+      ],
+      customer_entity_type: [
+        "firma",
+        "osvc",
+        "soukroma_osoba",
+        "dodavatel",
+        "partner",
+        "investor",
+        "developer",
+        "obec_mesto",
+        "organizace",
       ],
       defect_priority: ["low", "medium", "high", "critical"],
       defect_status: ["open", "in_progress", "completed", "rejected"],
