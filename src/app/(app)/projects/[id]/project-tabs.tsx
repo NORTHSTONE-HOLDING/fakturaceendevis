@@ -11,11 +11,13 @@ import {
   Plus,
   Loader2,
   Sparkles,
-  CheckCircle2,
-  Circle,
   BookOpen,
   Receipt,
   ClipboardCheck,
+  Hammer,
+  ArrowRight,
+  Check,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,7 +25,10 @@ import {
   addCostAction,
   addDefectAction,
   addDiaryEntryAction,
-  toggleDefectAction,
+  addAdditionalWorkAction,
+  decideAdditionalWorkAction,
+  advanceStageAction,
+  setDefectStatusAction,
 } from "../actions";
 import type { ProjectDetail } from "@/services/projects";
 import { Badge } from "@/components/ui/badge";
@@ -42,19 +47,26 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
+  ADDITIONAL_WORK_STATUS_LABELS,
+  ADDITIONAL_WORK_STATUS_VARIANT,
   COST_CATEGORIES,
   COST_CATEGORY_LABELS,
   DEFECT_PRIORITY_LABELS,
   DEFECT_PRIORITY_VARIANT,
+  DEFECT_STATUS_LABELS,
+  PROJECT_STAGES,
+  nextStage,
 } from "@/lib/projects";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import type { DefectPriority } from "@/types/database";
+import type { DefectPriority, DefectStatus } from "@/types/database";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
 export function ProjectTabs({ detail }: { detail: ProjectDetail }) {
-  const { project, financials, diary, defects, costs, invoices } = detail;
-  const openDefects = defects.filter((d) => !d.completed).length;
+  const { project, financials, diary, defects, costs, invoices, additionalWorks } =
+    detail;
+  const openDefects = defects.filter((d) => d.status !== "completed" && d.status !== "rejected").length;
+  const pendingAw = additionalWorks.filter((a) => a.status === "proposed").length;
 
   return (
     <Tabs defaultValue="overview">
@@ -62,12 +74,15 @@ export function ProjectTabs({ detail }: { detail: ProjectDetail }) {
         <TabsTrigger value="overview">Přehled</TabsTrigger>
         <TabsTrigger value="diary">Stavební deník ({diary.length})</TabsTrigger>
         <TabsTrigger value="defects">Vady ({openDefects})</TabsTrigger>
+        <TabsTrigger value="additional">Vícepráce ({pendingAw})</TabsTrigger>
         <TabsTrigger value="costs">Náklady</TabsTrigger>
         <TabsTrigger value="invoices">Faktury ({invoices.length})</TabsTrigger>
       </TabsList>
 
       {/* ── Overview / cost control ─────────────────────────────── */}
       <TabsContent value="overview" className="space-y-4">
+        <LifecycleStepper projectId={project.id} stage={project.stage} />
+
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Metric icon={Wallet} tone="gold" label="Rozpočet" value={formatCurrency(financials.budget)} />
           <Metric
@@ -103,6 +118,12 @@ export function ProjectTabs({ detail }: { detail: ProjectDetail }) {
                 {formatCurrency(financials.actualCost)} z{" "}
                 {formatCurrency(financials.budget)} rozpočtu
               </p>
+              {financials.approvedAdditional > 0 && (
+                <p className="text-xs text-primary">
+                  Vč. schválených víceprací{" "}
+                  {formatCurrency(financials.approvedAdditional)}
+                </p>
+              )}
               <div className="space-y-1.5 pt-2">
                 {COST_CATEGORIES.map((c) => (
                   <div key={c.value} className="flex justify-between text-sm">
@@ -190,6 +211,20 @@ export function ProjectTabs({ detail }: { detail: ProjectDetail }) {
           <div className="space-y-2">
             {defects.map((d) => (
               <DefectRow key={d.id} defect={d} projectId={project.id} />
+            ))}
+          </div>
+        )}
+      </TabsContent>
+
+      {/* ── Additional work (vícepráce) ─────────────────────────── */}
+      <TabsContent value="additional" className="space-y-4">
+        <AdditionalWorkForm projectId={project.id} />
+        {additionalWorks.length === 0 ? (
+          <EmptyState icon={Hammer} text="Zatím žádné vícepráce." />
+        ) : (
+          <div className="space-y-2">
+            {additionalWorks.map((a) => (
+              <AdditionalWorkRow key={a.id} work={a} projectId={project.id} />
             ))}
           </div>
         )}
@@ -524,37 +559,220 @@ function DefectRow({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
-  function toggle() {
+  function change(status: DefectStatus) {
     startTransition(async () => {
-      await toggleDefectAction(defect.id, projectId, !defect.completed);
+      await setDefectStatusAction(defect.id, projectId, status);
+      router.refresh();
+    });
+  }
+
+  const done = defect.status === "completed" || defect.status === "rejected";
+
+  return (
+    <Card>
+      <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <p className={done ? "text-sm text-muted-foreground line-through" : "text-sm font-medium"}>
+            {defect.description}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {defect.responsible ? `${defect.responsible} · ` : ""}
+            {defect.deadline ? `termín ${formatDate(defect.deadline)}` : "bez termínu"}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge variant={DEFECT_PRIORITY_VARIANT[defect.priority]}>
+            {DEFECT_PRIORITY_LABELS[defect.priority]}
+          </Badge>
+          <Select
+            value={defect.status}
+            onValueChange={(v) => change(v as DefectStatus)}
+            disabled={pending}
+          >
+            <SelectTrigger className="h-8 w-[130px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(DEFECT_STATUS_LABELS).map(([k, v]) => (
+                <SelectItem key={k} value={k}>
+                  {v}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function LifecycleStepper({
+  projectId,
+  stage,
+}: {
+  projectId: string;
+  stage: ProjectDetail["project"]["stage"];
+}) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const currentIdx = PROJECT_STAGES.findIndex((x) => x.value === stage);
+  const canAdvance = nextStage(stage) !== null;
+
+  function advance() {
+    startTransition(async () => {
+      const r = await advanceStageAction(projectId, stage);
+      if (r.error) {
+        toast.error(r.error);
+        return;
+      }
+      toast.success("Projekt posunut do další fáze");
       router.refresh();
     });
   }
 
   return (
     <Card>
-      <CardContent className="flex items-center justify-between gap-3 p-4">
-        <div className="flex items-center gap-3">
-          <button onClick={toggle} disabled={pending} className="text-primary">
-            {defect.completed ? (
-              <CheckCircle2 className="h-5 w-5 text-[hsl(var(--success))]" />
-            ) : (
-              <Circle className="h-5 w-5 text-muted-foreground" />
-            )}
-          </button>
-          <div>
-            <p className={defect.completed ? "text-sm line-through text-muted-foreground" : "text-sm font-medium"}>
-              {defect.description}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {defect.responsible ? `${defect.responsible} · ` : ""}
-              {defect.deadline ? `termín ${formatDate(defect.deadline)}` : "bez termínu"}
-            </p>
-          </div>
+      <CardHeader className="flex-row items-center justify-between space-y-0">
+        <CardTitle className="text-base">Životní cyklus projektu</CardTitle>
+        {canAdvance && (
+          <Button size="sm" onClick={advance} disabled={pending}>
+            {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+            Další fáze
+          </Button>
+        )}
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-wrap gap-1.5">
+          {PROJECT_STAGES.map((s2, i) => {
+            const state = i < currentIdx ? "done" : i === currentIdx ? "current" : "todo";
+            return (
+              <span
+                key={s2.value}
+                className={
+                  "rounded-full px-2.5 py-1 text-[11px] font-medium " +
+                  (state === "current"
+                    ? "bg-primary text-primary-foreground"
+                    : state === "done"
+                      ? "bg-primary/12 text-primary"
+                      : "bg-muted text-muted-foreground")
+                }
+              >
+                {s2.label}
+              </span>
+            );
+          })}
         </div>
-        <Badge variant={DEFECT_PRIORITY_VARIANT[defect.priority]}>
-          {DEFECT_PRIORITY_LABELS[defect.priority]}
-        </Badge>
+      </CardContent>
+    </Card>
+  );
+}
+
+function AdditionalWorkForm({ projectId }: { projectId: string }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState("");
+  const [vat, setVat] = useState("21");
+
+  function submit() {
+    startTransition(async () => {
+      const r = await addAdditionalWorkAction(projectId, {
+        description,
+        amount: Number(amount),
+        vat_rate: Number(vat),
+      });
+      if (r.error) {
+        toast.error(r.error);
+        return;
+      }
+      toast.success("Vícepráce navrženy");
+      setDescription("");
+      setAmount("");
+      router.refresh();
+    });
+  }
+
+  return (
+    <Card>
+      <CardContent className="grid gap-3 pt-6 sm:grid-cols-4">
+        <div className="space-y-1.5 sm:col-span-2">
+          <Label className="text-xs">Popis víceprací</Label>
+          <Input
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Dodatečná izolace základů"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs">Částka (bez DPH)</Label>
+          <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs">DPH %</Label>
+          <Input type="number" step="0.01" value={vat} onChange={(e) => setVat(e.target.value)} />
+        </div>
+        <div className="sm:col-span-4">
+          <Button onClick={submit} disabled={pending}>
+            {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+            Navrhnout vícepráce
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function AdditionalWorkRow({
+  work,
+  projectId,
+}: {
+  work: ProjectDetail["additionalWorks"][number];
+  projectId: string;
+}) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+
+  function decide(decision: "approved" | "rejected") {
+    startTransition(async () => {
+      const r = await decideAdditionalWorkAction(work.id, projectId, decision);
+      if (r.error) {
+        toast.error(r.error);
+        return;
+      }
+      toast.success(
+        decision === "approved"
+          ? "Vícepráce schváleny — rozpočet navýšen"
+          : "Vícepráce zamítnuty",
+      );
+      router.refresh();
+    });
+  }
+
+  return (
+    <Card>
+      <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-sm font-medium">{work.description}</p>
+          <p className="text-xs text-muted-foreground">
+            {formatCurrency(Number(work.amount))} + {Number(work.vat_rate)}% DPH
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge variant={ADDITIONAL_WORK_STATUS_VARIANT[work.status]}>
+            {ADDITIONAL_WORK_STATUS_LABELS[work.status]}
+          </Badge>
+          {work.status === "proposed" && (
+            <>
+              <Button size="sm" variant="outline" disabled={pending} onClick={() => decide("rejected")}>
+                <X className="h-4 w-4" /> Zamítnout
+              </Button>
+              <Button size="sm" disabled={pending} onClick={() => decide("approved")}>
+                {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                Schválit
+              </Button>
+            </>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

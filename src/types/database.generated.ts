@@ -34,6 +34,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      additional_works: {
+        Row: {
+          amount: number
+          approved_at: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          description: string
+          id: string
+          project_id: string
+          status: Database["public"]["Enums"]["additional_work_status"]
+          updated_at: string
+          vat_rate: number
+        }
+        Insert: {
+          amount?: number
+          approved_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          description: string
+          id?: string
+          project_id: string
+          status?: Database["public"]["Enums"]["additional_work_status"]
+          updated_at?: string
+          vat_rate?: number
+        }
+        Update: {
+          amount?: number
+          approved_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          description?: string
+          id?: string
+          project_id?: string
+          status?: Database["public"]["Enums"]["additional_work_status"]
+          updated_at?: string
+          vat_rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "additional_works_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "additional_works_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -294,6 +351,7 @@ export type Database = {
           priority: Database["public"]["Enums"]["defect_priority"]
           project_id: string
           responsible: string | null
+          status: Database["public"]["Enums"]["defect_status"]
         }
         Insert: {
           completed?: boolean
@@ -309,6 +367,7 @@ export type Database = {
           priority?: Database["public"]["Enums"]["defect_priority"]
           project_id: string
           responsible?: string | null
+          status?: Database["public"]["Enums"]["defect_status"]
         }
         Update: {
           completed?: boolean
@@ -324,6 +383,7 @@ export type Database = {
           priority?: Database["public"]["Enums"]["defect_priority"]
           project_id?: string
           responsible?: string | null
+          status?: Database["public"]["Enums"]["defect_status"]
         }
         Relationships: [
           {
@@ -871,6 +931,7 @@ export type Database = {
           notes: string | null
           number: string
           quotation_id: string | null
+          stage: Database["public"]["Enums"]["project_stage"]
           start_date: string
           status: Database["public"]["Enums"]["project_status"]
           updated_at: string
@@ -890,6 +951,7 @@ export type Database = {
           notes?: string | null
           number: string
           quotation_id?: string | null
+          stage?: Database["public"]["Enums"]["project_stage"]
           start_date?: string
           status?: Database["public"]["Enums"]["project_status"]
           updated_at?: string
@@ -909,6 +971,7 @@ export type Database = {
           notes?: string | null
           number?: string
           quotation_id?: string | null
+          stage?: Database["public"]["Enums"]["project_stage"]
           start_date?: string
           status?: Database["public"]["Enums"]["project_status"]
           updated_at?: string
@@ -1101,6 +1164,7 @@ export type Database = {
       }
     }
     Enums: {
+      additional_work_status: "proposed" | "approved" | "rejected"
       app_role:
         | "administrator"
         | "manager"
@@ -1108,9 +1172,28 @@ export type Database = {
         | "warehouse"
         | "sales"
       defect_priority: "low" | "medium" | "high" | "critical"
+      defect_status: "open" | "in_progress" | "completed" | "rejected"
       document_type: "INV" | "ADV" | "QTN" | "ORD" | "DLV" | "PRJ" | "HOV"
       invoice_status: "draft" | "sent" | "paid" | "overdue" | "cancelled"
       product_status: "active" | "inactive" | "archived"
+      project_stage:
+        | "lead"
+        | "inquiry"
+        | "site_visit"
+        | "budget"
+        | "quotation"
+        | "approval"
+        | "started"
+        | "diary"
+        | "warehouse"
+        | "delivery_notes"
+        | "advance_invoices"
+        | "additional_work"
+        | "interim_handover"
+        | "final_handover"
+        | "final_invoice"
+        | "warranty"
+        | "archived"
       project_status:
         | "planned"
         | "active"
@@ -1254,6 +1337,7 @@ export const Constants = {
   },
   public: {
     Enums: {
+      additional_work_status: ["proposed", "approved", "rejected"],
       app_role: [
         "administrator",
         "manager",
@@ -1262,9 +1346,29 @@ export const Constants = {
         "sales",
       ],
       defect_priority: ["low", "medium", "high", "critical"],
+      defect_status: ["open", "in_progress", "completed", "rejected"],
       document_type: ["INV", "ADV", "QTN", "ORD", "DLV", "PRJ", "HOV"],
       invoice_status: ["draft", "sent", "paid", "overdue", "cancelled"],
       product_status: ["active", "inactive", "archived"],
+      project_stage: [
+        "lead",
+        "inquiry",
+        "site_visit",
+        "budget",
+        "quotation",
+        "approval",
+        "started",
+        "diary",
+        "warehouse",
+        "delivery_notes",
+        "advance_invoices",
+        "additional_work",
+        "interim_handover",
+        "final_handover",
+        "final_invoice",
+        "warranty",
+        "archived",
+      ],
       project_status: ["planned", "active", "on_hold", "completed", "archived"],
       quotation_status: [
         "draft",

@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
-import type { DefectPriority } from "@/types/database";
+import { nextStage } from "@/lib/projects";
+import type { DefectPriority, DefectStatus, ProjectStage } from "@/types/database";
 
 export interface ActionResult {
   error?: string;
@@ -159,20 +160,107 @@ export async function addDefectAction(
   return {};
 }
 
-export async function toggleDefectAction(
+export async function setDefectStatusAction(
   defectId: string,
   projectId: string,
-  completed: boolean,
+  status: DefectStatus,
 ): Promise<void> {
   const supabase = await createClient();
+  const completed = status === "completed";
   await supabase
     .from("defects")
     .update({
+      status,
       completed,
       completion_date: completed ? new Date().toISOString().slice(0, 10) : null,
     })
     .eq("id", defectId);
   revalidatePath(`/projects/${projectId}`);
+}
+
+/** Advance the project one step along the lifecycle pipeline. */
+export async function advanceStageAction(
+  projectId: string,
+  current: ProjectStage,
+): Promise<ActionResult> {
+  const next = nextStage(current);
+  if (!next) return { error: "Projekt je již v poslední fázi." };
+  const supabase = await createClient();
+  const patch: { stage: ProjectStage; status?: "completed" | "archived" } = {
+    stage: next,
+  };
+  if (next === "archived") patch.status = "archived";
+  else if (next === "final_invoice" || next === "warranty") patch.status = "completed";
+  const { error } = await supabase.from("projects").update(patch).eq("id", projectId);
+  if (error) return { error: error.message };
+  revalidatePath(`/projects/${projectId}`);
+  revalidatePath("/projects");
+  return {};
+}
+
+export async function addAdditionalWorkAction(
+  projectId: string,
+  input: { description: string; amount: number; vat_rate: number },
+): Promise<ActionResult> {
+  if (!input.description.trim()) return { error: "Popis víceprací je povinný." };
+  if (!(input.amount > 0)) return { error: "Zadejte částku." };
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { error } = await supabase.from("additional_works").insert({
+    project_id: projectId,
+    description: input.description,
+    amount: input.amount,
+    vat_rate: input.vat_rate,
+    created_by: user?.id ?? null,
+  });
+  if (error) return { error: error.message };
+  revalidatePath(`/projects/${projectId}`);
+  return {};
+}
+
+/** Approve additional work — instantly raises the project budget. */
+export async function decideAdditionalWorkAction(
+  id: string,
+  projectId: string,
+  decision: "approved" | "rejected",
+): Promise<ActionResult> {
+  const supabase = await createClient();
+
+  const { data: aw } = await supabase
+    .from("additional_works")
+    .select("amount, status")
+    .eq("id", id)
+    .maybeSingle();
+  if (!aw) return { error: "Vícepráce nenalezeny." };
+
+  const { error } = await supabase
+    .from("additional_works")
+    .update({
+      status: decision,
+      approved_at: decision === "approved" ? new Date().toISOString() : null,
+    })
+    .eq("id", id);
+  if (error) return { error: error.message };
+
+  // On approval, add the amount to the project budget (only if it was not already approved).
+  if (decision === "approved" && aw.status !== "approved") {
+    const { data: project } = await supabase
+      .from("projects")
+      .select("budget_amount")
+      .eq("id", projectId)
+      .maybeSingle();
+    if (project) {
+      await supabase
+        .from("projects")
+        .update({ budget_amount: Number(project.budget_amount) + Number(aw.amount) })
+        .eq("id", projectId);
+    }
+  }
+
+  revalidatePath(`/projects/${projectId}`);
+  return {};
 }
 
 export async function addCostAction(

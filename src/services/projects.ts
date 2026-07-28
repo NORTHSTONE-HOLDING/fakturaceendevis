@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type {
+  AdditionalWork,
   Customer,
   Defect,
   DiaryEntry,
@@ -15,6 +16,7 @@ export interface ProjectFinancials {
   actualCost: number;
   revenue: number;
   advancesPaid: number;
+  approvedAdditional: number;
   profit: number;
   margin: number;
   budgetUsedPct: number;
@@ -31,6 +33,7 @@ export interface ProjectDetail {
     "id" | "number" | "total" | "status" | "issue_date" | "is_advance"
   >[];
   handovers: HandoverProtocol[];
+  additionalWorks: AdditionalWork[];
   financials: ProjectFinancials;
 }
 
@@ -65,6 +68,7 @@ export async function getProjectById(id: string): Promise<ProjectDetail | null> 
     { data: costs },
     { data: invoices },
     { data: handovers },
+    { data: additionalWorks },
   ] = await Promise.all([
     project.customer_id
       ? supabase.from("customers").select("*").eq("id", project.customer_id).maybeSingle()
@@ -91,6 +95,12 @@ export async function getProjectById(id: string): Promise<ProjectDetail | null> 
       .select("*")
       .eq("project_id", id)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("additional_works")
+      .select("*")
+      .eq("project_id", id)
+      .is("deleted_at", null)
+      .order("created_at", { ascending: false }),
   ]);
 
   const costList = costs ?? [];
@@ -108,6 +118,10 @@ export async function getProjectById(id: string): Promise<ProjectDetail | null> 
   const advancesPaid = invList
     .filter((i) => i.is_advance && i.status === "paid")
     .reduce((s, i) => s + Number(i.total), 0);
+  const awList = additionalWorks ?? [];
+  const approvedAdditional = awList
+    .filter((a) => a.status === "approved")
+    .reduce((s, a) => s + Number(a.amount), 0);
   const budget = Number(project.budget_amount);
   const profit = revenue - actualCost;
 
@@ -119,12 +133,14 @@ export async function getProjectById(id: string): Promise<ProjectDetail | null> 
     costs: costList,
     invoices: invList,
     handovers: handovers ?? [],
+    additionalWorks: awList,
     financials: {
       budget,
       costsByCategory,
       actualCost,
       revenue,
       advancesPaid,
+      approvedAdditional,
       profit,
       margin: revenue > 0 ? (profit / revenue) * 100 : 0,
       budgetUsedPct: budget > 0 ? (actualCost / budget) * 100 : 0,
