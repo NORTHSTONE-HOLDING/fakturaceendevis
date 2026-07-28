@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base surfaces */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 13%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 13%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 13%;
+
+    /* Primary = Gold #C89B3C */
+    --primary: 41 56% 51%;
+    --primary-foreground: 0 0% 100%;
+    --gold: 41 56% 51%;
+    --gold-foreground: 0 0% 100%;
+
+    /* Secondary = Graphite #181818 */
+    --secondary: 0 0% 9%;
+    --secondary-foreground: 0 0% 98%;
+    --graphite: 0 0% 9%;
+    --graphite-foreground: 0 0% 98%;
+
+    /* Surface = Light Gray #F7F7F7 */
+    --muted: 0 0% 97%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 41 54% 95%;
+    --accent-foreground: 41 60% 28%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 62% 40%;
+    --warning: 38 92% 50%;
+
+    --border: 0 0% 91%;
+    --input: 0 0% 91%;
+    --ring: 41 56% 51%;
+
+    /* 16px radius */
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 222 22% 8%;
+    --foreground: 210 20% 98%;
+
+    --card: 222 20% 11%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 222 20% 11%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 41 58% 56%;
+    --primary-foreground: 0 0% 8%;
+    --gold: 41 58% 56%;
+    --gold-foreground: 0 0% 8%;
+
+    --secondary: 0 0% 90%;
+    --secondary-foreground: 0 0% 10%;
+    --graphite: 0 0% 90%;
+    --graphite-foreground: 0 0% 10%;
+
+    --muted: 220 14% 16%;
+    --muted-foreground: 220 10% 65%;
+
+    --accent: 38 30% 18%;
+    --accent-foreground: 40 44% 90%;
+
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 55% 45%;
+    --warning: 38 92% 55%;
+
+    --border: 220 14% 20%;
+    --input: 220 14% 20%;
+    --ring: 38 55% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    @apply bg-gradient-to-br from-[hsl(42,60%,58%)] to-[hsl(34,52%,44%)] bg-clip-text text-transparent;
+  }
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl;
+  }
+  .card-elevated {
+    box-shadow:
+      0 1px 2px rgba(16, 24, 40, 0.04),
+      0 4px 16px rgba(16, 24, 40, 0.06);
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-border;
+  }
+}
+
+/* A4 document printing — 20mm margins, no overflow, perfect printing. */
+@media print {
+  @page {
+    size: A4;
+    margin: 20mm;
+  }
+  html,
+  body {
+    background: #ffffff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .document-sheet {
+    max-width: none !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    box-shadow: none !important;
+  }
+  /* @page already provides the 20mm margin — remove inner sheet padding. */
+  .document-sheet > div {
+    padding: 0 !important;
+  }
+}
